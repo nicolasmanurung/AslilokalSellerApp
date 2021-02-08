@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/navigation_beranda"
+        android:icon="@drawable/ic_home_black_24dp"
+        android:title="@string/title_beranda" />
+
+    <item
+        android:id="@+id/navigation_kelola_produk"
+        android:icon="@drawable/ic_kelola_product"
+        android:title="@string/title_kelola_produk" />
+
+    <item
+        android:id="@+id/navigation_pesanan"
+        android:icon="@drawable/ic_pesanan"
+        android:title="@string/title_pesanan" />
+
+    <item
+        android:id="@+id/navigation_analitik"
+        android:icon="@drawable/ic_baseline_assignment_24"
+        android:title="@string/title_analitik" />
+
+    <item
+        android:id="@+id/navigation_profil"
+        android:icon="@drawable/ic_baseline_person_24"
+        android:title="@string/title_profil" />
+
+</menu>

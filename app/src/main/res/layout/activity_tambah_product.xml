@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".ui.kelola.tambah.TambahProductActivity">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:id="@+id/linearLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:gravity="center"
+            android:orientation="vertical"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_centerInParent="true"
+                    android:layout_marginStart="16dp"
+                    android:src="@drawable/ic_baseline_arrow_back_24" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:layout_marginTop="16dp"
+                    android:fontFamily="@font/roboto_medium"
+                    android:gravity="center"
+                    android:text="Tambah Product"
+                    android:textSize="16sp" />
+            </RelativeLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="16dp"
+                android:background="@color/gray_card" />
+
+        </LinearLayout>
+
+        <androidx.core.widget.NestedScrollView
+            android:id="@+id/nestedScrollView"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            app:layout_constraintTop_toBottomOf="@+id/linearLayout">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <TextView
+                        android:id="@+id/textView6"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginTop="16dp"
+                        android:text="Jenis Produk"
+                        android:textColor="@color/black"
+                        android:textSize="12sp"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <androidx.cardview.widget.CardView
+                        android:id="@+id/cardView"
+                        android:layout_width="match_parent"
+                        android:layout_height="38dp"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginTop="4dp"
+                        android:layout_marginEnd="16dp"
+                        android:elevation="2dp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/textView6">
+
+                        <Spinner
+                            android:id="@+id/productSpinner"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent" />
+                    </androidx.cardview.widget.CardView>
+
+                    <EditText
+                        android:id="@+id/etNameProduct"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginTop="16dp"
+                        android:inputType="text"
+                        android:layout_marginEnd="16dp"
+                        android:backgroundTint="@color/gray"
+                        android:hint="@string/hint_name_product"
+                        android:textColor="@color/black"
+                        android:textColorHint="@color/black"
+                        app:layout_constraintTop_toBottomOf="@+id/cardView"
+                        tools:layout_editor_absoluteX="16dp" />
+
+                    <me.abhinay.input.CurrencyEditText
+                        android:id="@+id/etBeratProduct"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginTop="16dp"
+                        android:inputType="numberDecimal"
+                        android:layout_marginEnd="16dp"
+                        android:backgroundTint="@color/gray"
+                        android:hint="@string/hint_berat_product"
+                        android:textColor="@color/black"
+                        android:textColorHint="@color/black"
+                        app:layout_constraintTop_toBottomOf="@+id/etNameProduct" />
+
+                    <me.abhinay.input.CurrencyEditText
+                        android:id="@+id/etHargaProduct"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginTop="16dp"
+                        android:inputType="numberDecimal"
+                        android:layout_marginEnd="16dp"
+                        android:backgroundTint="@color/gray"
+                        android:hint="@string/hint_harga_product"
+                        android:textColor="@color/black"
+                        android:textColorHint="@color/black"
+                        app:layout_constraintTop_toBottomOf="@+id/etBeratProduct" />
+
+                    <EditText
+                        android:id="@+id/etDeskripsi"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginTop="16dp"
+                        android:layout_marginEnd="16dp"
+                        android:backgroundTint="@color/gray"
+                        android:hint="@string/hint_deskripsi_product"
+                        android:textColor="@color/black"
+                        android:textColorHint="@color/black"
+                        app:layout_constraintTop_toBottomOf="@+id/etHargaProduct" />
+
+                    <TextView
+                        android:id="@+id/textView7"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginTop="16dp"
+                        android:text="Foto Produk"
+                        android:textColor="@color/black"
+                        android:textSize="14sp"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/etDeskripsi" />
+
+                    <Button
+                        android:id="@+id/button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="16dp"
+                        android:backgroundTint="@color/primaryColor"
+                        android:text="Pilih"
+                        android:textColor="@color/white"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/etDeskripsi" />
+
+                    <ImageView
+                        android:id="@+id/gambarProduct"
+                        android:layout_width="match_parent"
+                        android:layout_height="240dp"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginEnd="16dp"
+                        android:scaleType="centerCrop"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/button" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <Button
+                    android:id="@+id/buttonTambah"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginEnd="16dp"
+                    android:backgroundTint="@color/teal_200"
+                    android:text="Tambah"
+                    android:textColor="@color/white" />
+            </LinearLayout>
+        </androidx.core.widget.NestedScrollView>
+
+        <include
+            android:id="@+id/llProgressBar"
+            layout="@layout/progressbar_blocking"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>

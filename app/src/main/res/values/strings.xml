@@ -1,0 +1,29 @@
+<resources>
+    <string name="app_name">Kodelapo Mitra</string>
+    <string name="title_beranda">Beranda</string>
+    <string name="title_kelola_produk">Kelola Produk</string>
+    <string name="title_pesanan">Pesanan</string>
+    <string name="title_analitik">Analitik</string>
+    <string name="title_profil">Profil</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="notification">Notifikasi</string>
+    <string name="message">Pesan</string>
+    <string name="floatingactionbutton">FloatingActionButton</string>
+    <string name="password">Password</string>
+    <string name="email">Email</string>
+    <string name="daftar">Daftar</string>
+
+    <string-array name="jenis_product">
+        <item>Kuliner</item>
+        <item>Jasa</item>
+        <item>Sembako</item>
+        <item>Fashion</item>
+    </string-array>
+
+    <string name="hint_name_product"><font size="12">Nama Product</font></string>
+    <string name="hint_berat_product"><font size="12">Berat (gram)</font></string>
+    <string name="hint_harga_product"><font size="12">Harga</font></string>
+    <string name="hint_deskripsi_product"><font size="12">Deskripsi</font></string>
+
+</resources>

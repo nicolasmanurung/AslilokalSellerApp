@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".ui.beranda.BerandaFragment">
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="130dp"
+                android:layout_margin="16dp"
+                app:cardCornerRadius="6dp">
+
+                <com.denzcoskun.imageslider.ImageSlider
+                    android:id="@+id/imageBerandaSlider"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    app:iss_auto_cycle="true"
+                    app:iss_delay="0"
+                    app:iss_period="1000" />
+
+            </androidx.cardview.widget.CardView>
+
+            <RelativeLayout
+                android:id="@+id/rlUtang"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:background="@drawable/shape_border">
+
+                <TextView
+                    android:id="@+id/titleTxtBerandaUtang"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:fontFamily="@font/roboto_medium"
+                    android:text="Ada yang ngutang?"
+                    android:textColor="@color/black"
+                    android:textSize="16sp" />
+
+                <TextView
+                    android:id="@+id/subTitleTxtBerandaUtang"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/titleTxtBerandaUtang"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="8dp"
+                    android:text="Catat sekarang biar tidak lupa!"
+                    android:textSize="14sp" />
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerInParent="true"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginEnd="8dp"
+                    android:src="@drawable/ic_baseline_chevron_right_24" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/rlBantuan"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="16dp">
+
+                <TextView
+                    android:id="@+id/titleTxtBerandaBantuan"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:fontFamily="@font/roboto_medium"
+                    android:text="Butuh bantuan?"
+                    android:textColor="@color/black"
+                    android:textSize="16sp" />
+
+                <TextView
+                    android:id="@+id/subTitleTxtBerandaBantuan"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/titleTxtBerandaBantuan"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="8dp"
+                    android:text="Hubungi kodelapo care segera!"
+                    android:textSize="14sp" />
+
+                <ImageButton
+                    android:layout_width="80dp"
+                    android:layout_height="48dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerInParent="true"
+                    android:layout_marginEnd="8dp"
+                    android:backgroundTint="@color/primaryColor"
+                    android:src="@drawable/ic_baseline_local_phone_24" />
+            </RelativeLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="8dp"
+                android:layout_marginTop="16dp"
+                android:background="@color/fading" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:fontFamily="@font/roboto_medium"
+                android:text="Informasi Mitra"
+                android:textColor="@color/black"
+                android:textSize="16sp" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvImageBeranda"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="14dp"
+                android:layout_marginStart="14dp"/>
+
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+</LinearLayout>
