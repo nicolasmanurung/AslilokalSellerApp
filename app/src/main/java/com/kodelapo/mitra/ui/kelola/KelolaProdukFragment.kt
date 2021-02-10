@@ -41,6 +41,8 @@ class KelolaProdukFragment : Fragment() {
             }
         }.attach()
 
+        binding.vp.isUserInputEnabled = false
+
         return binding.root
     }
 
@@ -66,5 +68,6 @@ class KelolaProdukFragment : Fragment() {
             return 5
         }
     }
+
 
 }

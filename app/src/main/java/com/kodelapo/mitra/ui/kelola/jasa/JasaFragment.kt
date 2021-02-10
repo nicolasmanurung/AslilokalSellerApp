@@ -107,6 +107,7 @@ class JasaFragment : Fragment() {
                 is ResourcePagination.Loading -> {
                     showProgressBar()
                     hideSwipeProgress()
+                    hideErrorMessage()
                 }
             }
         })

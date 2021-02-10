@@ -79,7 +79,6 @@ class TambahProductActivity : AppCompatActivity() {
             android.R.layout.simple_dropdown_item_1line
         ).also { adapter ->
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-
             binding.productSpinner.adapter = adapter
         }
 

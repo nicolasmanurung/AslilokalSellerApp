@@ -105,6 +105,7 @@ class KulinerFragment : Fragment() {
                 }
                 is ResourcePagination.Loading -> {
                     showProgressBar()
+                    hideErrorMessage()
                     hideSwipeProgress()
                 }
             }

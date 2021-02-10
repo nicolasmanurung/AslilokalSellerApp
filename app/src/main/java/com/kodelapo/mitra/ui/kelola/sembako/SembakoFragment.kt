@@ -107,6 +107,7 @@ class SembakoFragment : Fragment() {
                 is ResourcePagination.Loading -> {
                     showProgressBar()
                     hideSwipeProgress()
+                    hideErrorMessage()
                 }
             }
         })

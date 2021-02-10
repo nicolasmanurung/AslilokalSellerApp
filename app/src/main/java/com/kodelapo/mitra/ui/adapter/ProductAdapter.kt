@@ -1,18 +1,26 @@
 package com.kodelapo.mitra.ui.adapter
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.Priority
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.request.RequestOptions
+import com.bumptech.glide.signature.ObjectKey
 import com.kodelapo.mitra.databinding.ItemProductBinding
 import com.kodelapo.mitra.model.remote.response.Product
+import com.kodelapo.mitra.ui.kelola.edit.EditProductActivity
 import com.kodelapo.mitra.utils.Constants.Companion.BUCKET_PRODUCT_URL
 import com.tuonbondol.textviewutil.strike
+
 
 class ProductAdapter :
     RecyclerView.Adapter<ProductAdapter.GridProductViewHolder>() {
@@ -22,30 +30,42 @@ class ProductAdapter :
         @SuppressLint("SetTextI18n")
         fun bind(product: Product) {
             binding.imgProduct.setBackgroundColor(Color.rgb(217, 217, 217))
+
             Glide.with(itemView.context)
                 .load(BUCKET_PRODUCT_URL + product.imgProduct)
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .skipMemoryCache(true)
+                .priority(Priority.HIGH)
                 .into(binding.imgProduct)
+
             binding.txtCurrentPrice.text = product.priceProduct
             binding.txtNameProduct.text = product.nameProduct
-            if (!(product.promoPrice.isNullOrEmpty())) {
-                binding.txtPromoPrice.text = product.priceProduct
-                binding.txtCurrentPrice.text = product.promoPrice
-                binding.lnrPromo.visibility = View.VISIBLE
-                var sumCount = (product.promoPrice.toFloat() / product.priceProduct.toFloat())
-                var countPercentage = (100 - (sumCount * 100).toInt())
-                binding.percentagePromo.text = "$countPercentage %"
-                binding.txtPromoPrice.strike()
-            } else {
-                binding.lnrPromo.visibility = View.INVISIBLE
-                binding.txtPromoPrice.visibility = View.GONE
+            when (product.promoPrice?.toIntOrNull()) {
+                0 -> {
+                    binding.lnrPromo.visibility = View.INVISIBLE
+                    binding.txtPromoPrice.visibility = View.GONE
+                }
+                null -> {
+                    binding.lnrPromo.visibility = View.INVISIBLE
+                    binding.txtPromoPrice.visibility = View.GONE
+                }
+                else -> {
+                    binding.txtPromoPrice.text = product.priceProduct
+                    binding.txtCurrentPrice.text = product.promoPrice
+                    binding.lnrPromo.visibility = View.VISIBLE
+                    val sumCount =
+                        (product.promoPrice.toFloat().div(product.priceProduct.toFloat()))
+                    val countPercentage = (100 - (sumCount.times(100)).toInt())
+                    binding.percentagePromo.text = "$countPercentage %"
+                    binding.txtPromoPrice.strike()
+                }
             }
-//            itemView.setOnClickListener {
-//                Toast.makeText(
-//                    binding.root.context,
-//                    product.promoPrice,
-//                    Toast.LENGTH_SHORT
-//                ).show()
-//            }
+            itemView.setOnClickListener {
+                Toast.makeText(binding.root.context, product._id, Toast.LENGTH_SHORT).show()
+                val intent = Intent(binding.root.context, EditProductActivity::class.java)
+                intent.putExtra("idProduct", product._id)
+                binding.root.context.startActivity(intent)
+            }
         }
     }
 

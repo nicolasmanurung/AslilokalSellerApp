@@ -6,6 +6,7 @@ import com.kodelapo.mitra.model.data.api.ApiHelper
 import com.kodelapo.mitra.model.data.repository.KodelapoRepository
 import com.kodelapo.mitra.ui.account.login.LoginViewModel
 import com.kodelapo.mitra.ui.kelola.KelolaProdukViewModel
+import com.kodelapo.mitra.ui.kelola.edit.EditViewModel
 import com.kodelapo.mitra.ui.kelola.tambah.TambahProductViewModel
 import com.kodelapo.mitra.ui.profil.ProfilViewModel
 
@@ -21,8 +22,11 @@ class KodelapoViewModelProviderFactory(private val apiHelper: ApiHelper) :
         if (modelClass.isAssignableFrom(ProfilViewModel::class.java)) {
             return ProfilViewModel(KodelapoRepository(apiHelper)) as T
         }
-        if(modelClass.isAssignableFrom(TambahProductViewModel::class.java)){
+        if (modelClass.isAssignableFrom(TambahProductViewModel::class.java)) {
             return TambahProductViewModel(KodelapoRepository(apiHelper)) as T
+        }
+        if (modelClass.isAssignableFrom(EditViewModel::class.java)) {
+            return EditViewModel(KodelapoRepository(apiHelper)) as T
         }
         throw IllegalArgumentException("Unknown class name")
     }

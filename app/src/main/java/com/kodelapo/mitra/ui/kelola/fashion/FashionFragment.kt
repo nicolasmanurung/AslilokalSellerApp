@@ -107,6 +107,7 @@ class FashionFragment : Fragment() {
                 is ResourcePagination.Loading -> {
                     showProgressBar()
                     hideSwipeProgress()
+                    hideErrorMessage()
                 }
             }
         })

@@ -2,6 +2,7 @@ package com.kodelapo.mitra.model.data.repository
 
 import com.kodelapo.mitra.model.data.api.ApiHelper
 import com.kodelapo.mitra.model.remote.request.LoginRequest
+import com.kodelapo.mitra.model.remote.request.OneProduct
 import com.kodelapo.mitra.model.remote.response.LoginResponse
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -39,4 +40,22 @@ class KodelapoRepository(val apiHelper: ApiHelper) {
         isAvailable,
         promoPrice
     )
+
+    suspend fun getOneProduct(token: String, id: String) = apiHelper.getOneProduct(token, id)
+
+    suspend fun putOneProduct(
+        token: String,
+        id: String,
+        dataProduct: OneProduct
+    ) = apiHelper.putOneProduct(
+        token,
+        id,
+        dataProduct
+    )
+
+    suspend fun putOneImage(
+        token: String,
+        imageStream: MultipartBody.Part,
+        imgKey: RequestBody
+    ) = apiHelper.putOneImage(token, imageStream, imgKey)
 }
