@@ -2,6 +2,7 @@ package com.kodelapo.mitra.model.data.api
 
 import com.kodelapo.mitra.model.remote.request.LoginRequest
 import com.kodelapo.mitra.model.remote.request.OneProduct
+import com.kodelapo.mitra.model.remote.request.PesananRequest
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 
@@ -53,4 +54,16 @@ class ApiHelper(private val apiService: KodelapoAPI) {
         imagePart: MultipartBody.Part,
         imgKey: RequestBody
     ) = apiService.putImageProduct(token, imgKey, imagePart)
+
+    suspend fun getOrderByStatus(
+        token: String,
+        idUser: String,
+        status: String
+    ) = apiService.getOrderByStatus(token, idUser, status)
+
+    suspend fun putStatusOrder(
+        token: String,
+        idOrder: String,
+        pesananRequest: PesananRequest
+    ) = apiService.putStatusOneOrder(token, idOrder, pesananRequest)
 }

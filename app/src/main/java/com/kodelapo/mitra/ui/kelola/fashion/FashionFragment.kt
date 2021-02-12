@@ -55,7 +55,6 @@ class FashionFragment : Fragment() {
         return binding.root
     }
 
-
     private fun setupViewModel() {
         viewModel = ViewModelProvider(
             viewModelStore,

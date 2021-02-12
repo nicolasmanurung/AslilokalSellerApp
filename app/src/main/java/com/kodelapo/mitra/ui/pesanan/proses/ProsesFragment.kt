@@ -1,60 +1,129 @@
 package com.kodelapo.mitra.ui.pesanan.proses
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.kodelapo.mitra.R
+import android.widget.Toast
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.kodelapo.mitra.databinding.FragmentProsesBinding
+import com.kodelapo.mitra.model.data.api.ApiHelper
+import com.kodelapo.mitra.model.data.api.RetrofitInstance
+import com.kodelapo.mitra.model.remote.response.OrderResponse
+import com.kodelapo.mitra.ui.adapter.PesananAdapter
+import com.kodelapo.mitra.ui.pesanan.PesananViewModel
+import com.kodelapo.mitra.utils.KodelapoDataStore
+import com.kodelapo.mitra.utils.ResourcePagination
+import com.kodelapo.mitra.viewmodel.KodelapoViewModelProviderFactory
+import kotlinx.coroutines.launch
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
-/**
- * A simple [Fragment] subclass.
- * Use the [ProsesFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class ProsesFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
-    }
+    private var _binding: FragmentProsesBinding? = null
+    private val binding get() = _binding!!
+    private lateinit var dataStore: KodelapoDataStore
+    private lateinit var viewModel: PesananViewModel
+    private lateinit var orderAdapter: PesananAdapter
+    private var list = ArrayList<OrderResponse>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_proses, container, false)
+        _binding = FragmentProsesBinding.inflate(inflater, container, false)
+
+        hideEmpty()
+        setupViewModel()
+        setupRecycler()
+
+        dataStore = KodelapoDataStore(binding.root.context)
+
+        getData()
+
+        binding.swipeRefresh.setOnRefreshListener {
+            getData()
+        }
+
+        return binding.root
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment ProsesFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            ProsesFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
+    private fun getData() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            val username = dataStore.read("USERNAME").toString()
+            val token = dataStore.read("TOKEN").toString()
+            viewModel.getPesanan(token, username, "process")
+            setupObserver()
+        }
+    }
+
+    private fun setupViewModel() {
+        viewModel = ViewModelProvider(
+            viewModelStore,
+            KodelapoViewModelProviderFactory(ApiHelper(RetrofitInstance.api))
+        ).get(PesananViewModel::class.java)
+    }
+
+    private fun setupRecycler() {
+        orderAdapter = PesananAdapter()
+        binding.rvDiproses.apply {
+            adapter = orderAdapter
+            layoutManager = LinearLayoutManager(binding.root.context)
+        }
+    }
+
+    private fun setupObserver() {
+        viewModel.orders.observe(viewLifecycleOwner, { response ->
+            when (response) {
+                is ResourcePagination.Success -> {
+                    hideProgressBar()
+                    response.data?.result.let { orderResponse ->
+                        orderAdapter.differ.submitList(orderResponse?.toList())
+                        if (orderResponse != null) {
+                            if (orderResponse.toList().isEmpty()) {
+                                showEmpty()
+                            } else {
+                                hideEmpty()
+                            }
+                        }
+                    }
+                }
+
+                is ResourcePagination.Error -> {
+                    hideProgressBar()
+                    hideEmpty()
+                    response.message?.let { message ->
+                        Toast.makeText(
+                            activity,
+                            "Jaringanmu lemah, coba refresh...",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                }
+
+                is ResourcePagination.Loading -> {
+                    showProgressBar()
+                    hideEmpty()
                 }
             }
+        })
+    }
+
+    private fun showProgressBar() {
+        binding.swipeRefresh.isRefreshing = true
+    }
+
+    private fun hideProgressBar() {
+        binding.swipeRefresh.isRefreshing = false
+    }
+
+    private fun showEmpty() {
+        binding.lnrEmpty.visibility = View.VISIBLE
+    }
+
+    private fun hideEmpty() {
+        binding.lnrEmpty.visibility = View.GONE
     }
 }

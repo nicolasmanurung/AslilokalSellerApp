@@ -1,12 +1,7 @@
 package com.kodelapo.mitra.model.data.api
 
-import com.kodelapo.mitra.model.remote.request.LoginRequest
-import com.kodelapo.mitra.model.remote.request.OneProduct
-import com.kodelapo.mitra.model.remote.request.OneProductRequest
-import com.kodelapo.mitra.model.remote.request.ProductRequest
-import com.kodelapo.mitra.model.remote.response.LoginResponse
-import com.kodelapo.mitra.model.remote.response.ProductResponse
-import com.kodelapo.mitra.model.remote.response.ShopResponse
+import com.kodelapo.mitra.model.remote.request.*
+import com.kodelapo.mitra.model.remote.response.*
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.Response
@@ -73,4 +68,19 @@ interface KodelapoAPI {
         @Part imgProduct: MultipartBody.Part
     ): Response<OneProductRequest>
 
+    @Headers("Content-Type:application/json")
+    @GET("seller/orders/{idUser}")
+    suspend fun getOrderByStatus(
+        @Header("Authorization") token: String,
+        @Path("idUser") idUSer: String,
+        @Query("status") status: String
+    ): Response<OrderResponse>
+
+    @Headers("Content-Type:application/json")
+    @PUT("seller/order/status/{idOrder}")
+    suspend fun putStatusOneOrder(
+        @Header("Authorization") token: String,
+        @Path("idOrder") idOrder: String,
+        @Body pesananRequest: PesananRequest
+    ): Response<StatusResponse>
 }

@@ -32,7 +32,7 @@ class KelolaProdukViewModel(private val mainRepository: KodelapoRepository) : Vi
 //            }
         } catch (t: Throwable) {
             when (t) {
-                is IOException -> products.postValue(ResourcePagination.Error("Network Failure"))
+                is IOException -> products.postValue(ResourcePagination.Error("Jaringan lemah"))
                 else -> products.postValue(ResourcePagination.Error("Conversion Error"))
             }
         }

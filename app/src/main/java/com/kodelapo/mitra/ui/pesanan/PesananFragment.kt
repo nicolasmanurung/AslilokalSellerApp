@@ -33,7 +33,7 @@ class PesananFragment : Fragment() {
         TabLayoutMediator(binding.tabs, binding.vp) { tab, position ->
             when (position) {
                 0 -> tab.text = "Bayar"
-                1 -> tab.text = "Di Proses"
+                1 -> tab.text = "Diproses"
                 2 -> tab.text = "Menunggu"
                 3 -> tab.text = "Selesai"
             }

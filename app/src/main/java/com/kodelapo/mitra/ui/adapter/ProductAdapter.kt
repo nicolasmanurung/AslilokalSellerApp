@@ -61,7 +61,7 @@ class ProductAdapter :
                 }
             }
             itemView.setOnClickListener {
-                Toast.makeText(binding.root.context, product._id, Toast.LENGTH_SHORT).show()
+//                Toast.makeText(binding.root.context, product._id, Toast.LENGTH_SHORT).show()
                 val intent = Intent(binding.root.context, EditProductActivity::class.java)
                 intent.putExtra("idProduct", product._id)
                 binding.root.context.startActivity(intent)

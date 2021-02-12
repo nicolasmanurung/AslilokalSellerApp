@@ -61,6 +61,7 @@ class BerandaFragment : Fragment() {
 
         inner class GridViewHolder(private val binding: ItemBerandaImageBinding) :
             RecyclerView.ViewHolder(binding.root) {
+
             fun bind(image: ItemBerandaImage) {
                 Glide.with(itemView.context)
                     .load(image.imgName)

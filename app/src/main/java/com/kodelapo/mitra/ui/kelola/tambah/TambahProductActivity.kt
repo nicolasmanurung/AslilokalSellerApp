@@ -206,14 +206,13 @@ class TambahProductActivity : AppCompatActivity() {
         builder.setTitle("Ambil gambar")
         //set content area
         builder.setMessage("Silahkan pilih gambar produk kamu")
-        //set negative button
         builder.setPositiveButton(
             "Dari Galery"
         ) { dialog, id ->
             // User clicked Update Now button
             chooseImageGallery()
         }
-        //set positive button
+
         builder.setNegativeButton(
             "Dari Kamera"
         ) { dialog, id ->
