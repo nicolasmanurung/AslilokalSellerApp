@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/sellerInfoFragment"
+        android:title="Data Penjual" />
+
+    <item
+        android:id="@+id/shopInfoFragment"
+        android:title="Data Toko" />
+
+    <item
+        android:id="@+id/submitRegistrationFragment"
+        android:title="Selesai" />
+
+</menu>

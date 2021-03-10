@@ -7,26 +7,26 @@
 
     <fragment
         android:id="@+id/navigation_beranda"
-        android:name="com.kodelapo.mitra.ui.beranda.BerandaFragment"
+        android:name="com.aslilokal.mitra.ui.beranda.BerandaFragment"
         tools:layout="@layout/fragment_beranda" />
 
     <fragment
         android:id="@+id/navigation_kelola_produk"
-        android:name="com.kodelapo.mitra.ui.kelola.KelolaProdukFragment"
+        android:name="com.aslilokal.mitra.ui.kelola.KelolaProdukFragment"
         tools:layout="@layout/fragment_kelola_produk" />
 
     <fragment
         android:id="@+id/navigation_pesanan"
-        android:name="com.kodelapo.mitra.ui.pesanan.PesananFragment"
+        android:name="com.aslilokal.mitra.ui.pesanan.PesananFragment"
         tools:layout="@layout/fragment_pesanan" />
 
     <fragment
         android:id="@+id/navigation_analitik"
-        android:name="com.kodelapo.mitra.ui.analitik.AnalitikFragment"
+        android:name="com.aslilokal.mitra.ui.analitik.AnalitikFragment"
         tools:layout="@layout/fragment_analitik" />
 
     <fragment
         android:id="@+id/navigation_profil"
-        android:name="com.kodelapo.mitra.ui.profil.ProfilFragment"
+        android:name="com.aslilokal.mitra.ui.profil.ProfilFragment"
         tools:layout="@layout/fragment_profil" />
 </navigation>

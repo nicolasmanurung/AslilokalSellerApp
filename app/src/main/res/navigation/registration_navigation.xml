@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/registration_navigation"
+    app:startDestination="@id/sellerInfoFragment">
+
+    <fragment
+        android:id="@+id/sellerInfoFragment"
+        android:name="com.aslilokal.mitra.ui.account.verify.SellerInfoFragment"
+        android:label="fragment_seller_info"
+        tools:layout="@layout/fragment_seller_info" />
+    <fragment
+        android:id="@+id/shopInfoFragment"
+        android:name="com.aslilokal.mitra.ui.account.verify.ShopInfoFragment"
+        android:label="fragment_shop_info"
+        tools:layout="@layout/fragment_shop_info" />
+    <fragment
+        android:id="@+id/submitRegistrationFragment"
+        android:name="com.aslilokal.mitra.ui.account.verify.SubmitRegistrationFragment"
+        android:label="fragment_submit_registration"
+        tools:layout="@layout/fragment_submit_registration" />
+
+
+</navigation>

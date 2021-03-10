@@ -8,19 +8,19 @@
     tools:context=".ui.pesanan.PesananFragment">
 
     <com.google.android.material.tabs.TabLayout
+        android:id="@+id/tabs"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:background="@color/white"
-        app:tabTextColor="@color/gray"
-        app:tabRippleColor="@color/primaryColor"
-        app:tabIndicatorColor="@color/primaryColor"
-        app:tabSelectedTextColor="@color/primaryColor"
         android:elevation="5dp"
+        app:tabIndicatorColor="@color/primaryColor"
+        app:tabRippleColor="@color/primaryColor"
+        app:tabSelectedTextColor="@color/primaryColor"
         app:tabTextAppearance="@style/ToolbarText"
-        android:id="@+id/tabs"/>
+        app:tabTextColor="@color/gray" />
 
     <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/vp"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/vp"/>
+        android:layout_height="match_parent" />
 </LinearLayout>
