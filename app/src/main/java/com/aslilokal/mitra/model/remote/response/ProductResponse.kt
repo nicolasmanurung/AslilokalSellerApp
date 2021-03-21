@@ -40,5 +40,7 @@ data class Product(
     val priceServiceRange: String,
     val productCategory: String,
     val productWeight: Int,
+    val umkmTags: String,
+    val promotionTags: ArrayList<String>?,
     val promoPrice: String? = null
 ) : Parcelable

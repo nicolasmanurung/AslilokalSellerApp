@@ -79,8 +79,7 @@ class FashionFragment : Fragment() {
                     hideErrorMessage()
                     hideSwipeProgress()
                     response.data?.result.let { productResponse ->
-                        var product =
-                            productAdapter.differ.submitList(productResponse?.docs?.toList())
+                        productAdapter.differ.submitList(productResponse?.docs?.toList())
 
                         if (productResponse?.docs?.toList()?.size!! <= 0) {
                             binding.lnrEmpty.visibility = View.VISIBLE
@@ -142,6 +141,7 @@ class FashionFragment : Fragment() {
             val shouldPaginate =
                 isNoErrors && isNotLoadingAndNotLastPage && isAtLastItem && isNotAtBeginning &&
                         isTotalMoreThanVisible && isScrolling
+
             if (shouldPaginate) {
                 var username: String
                 var token: String
@@ -164,10 +164,6 @@ class FashionFragment : Fragment() {
 
     private fun hideSwipeProgress() {
         binding.swipeRefresh.isRefreshing = false
-    }
-
-    private fun showSwipeProgress() {
-        binding.swipeRefresh.isRefreshing = true
     }
 
     private fun hideProgressBar() {

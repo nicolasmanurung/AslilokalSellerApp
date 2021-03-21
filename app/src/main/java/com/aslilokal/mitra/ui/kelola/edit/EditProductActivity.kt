@@ -183,6 +183,8 @@ class EditProductActivity : AppCompatActivity() {
             priceServiceRange,
             productCategory,
             productWeight.toInt(),
+            null,
+            null,
             promoPrice.toInt()
         )
         viewModel.putOneProduct(

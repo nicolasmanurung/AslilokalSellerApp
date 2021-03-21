@@ -55,6 +55,9 @@ class VerifyEmailActivity : AppCompatActivity() {
                 if (count == 6) {
                     showProgress()
                     verifyToken = s.toString()
+
+                    binding.btnNextVerification.visibility = View.VISIBLE
+
                     lifecycleScope.launch {
                         val token = datastore.read("TOKEN").toString()
                         getToken(token, verifyToken)
@@ -70,6 +73,14 @@ class VerifyEmailActivity : AppCompatActivity() {
                 }
             }
         })
+
+
+        binding.btnNextVerification.setOnClickListener {
+            lifecycleScope.launch {
+                val token = datastore.read("TOKEN").toString()
+                getToken(token, verifyToken)
+            }
+        }
 
         binding.txtResend.setOnClickListener {
             lifecycleScope.launch {
@@ -186,4 +197,6 @@ class VerifyEmailActivity : AppCompatActivity() {
             WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
         )
     }
+
+
 }

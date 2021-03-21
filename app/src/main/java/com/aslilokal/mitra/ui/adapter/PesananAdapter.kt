@@ -33,8 +33,6 @@ class PesananAdapter :
             binding.btnAcceptOrder.setOnClickListener {
                 onItemClick?.invoke(order)
             }
-
-
             binding.txtNameItemProduct.text = order.products[0].nameProduct
             binding.txtItemCount.text = order.products.size.toString() + " item"
 

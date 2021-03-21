@@ -11,7 +11,6 @@ import okio.IOException
 import retrofit2.Response
 
 class KelolaProdukViewModel(private val mainRepository: KodelapoRepository) : ViewModel() {
-
     val products: MutableLiveData<ResourcePagination<ProductResponse>> = MutableLiveData()
     var productPage = 1
     var productResponse: ProductResponse? = null

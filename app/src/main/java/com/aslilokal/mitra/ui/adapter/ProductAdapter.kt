@@ -9,12 +9,13 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
-import com.bumptech.glide.Priority
 import com.aslilokal.mitra.databinding.ItemProductBinding
 import com.aslilokal.mitra.model.remote.response.Product
 import com.aslilokal.mitra.ui.kelola.edit.EditProductActivity
 import com.aslilokal.mitra.utils.Constants.Companion.BUCKET_PRODUCT_URL
+import com.aslilokal.mitra.utils.CustomFunction
+import com.bumptech.glide.Glide
+import com.bumptech.glide.Priority
 import com.tuonbondol.textviewutil.strike
 
 
@@ -44,8 +45,9 @@ class ProductAdapter :
                     binding.txtPromoPrice.visibility = View.GONE
                 }
                 else -> {
-                    binding.txtPromoPrice.text = product.priceProduct
-                    binding.txtCurrentPrice.text = product.promoPrice
+                    binding.txtPromoPrice.text =
+                        CustomFunction().formatRupiah(product.priceProduct.toDouble())
+                    binding.txtCurrentPrice.text = CustomFunction().formatRupiah(product.promoPrice.toDouble())
                     binding.lnrPromo.visibility = View.VISIBLE
                     val sumCount =
                         (product.promoPrice.toFloat().div(product.priceProduct.toFloat()))

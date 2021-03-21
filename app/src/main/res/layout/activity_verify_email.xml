@@ -56,6 +56,21 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tvEmail" />
 
+
+    <TextView
+        android:id="@+id/btnNextVerification"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:fontFamily="@font/roboto_medium"
+        android:text="Verifikasi"
+        android:textColor="@color/primaryColor"
+        android:textSize="18sp"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/etCode" />
+
     <TextView
         android:id="@+id/tvReceive"
         android:layout_width="wrap_content"
