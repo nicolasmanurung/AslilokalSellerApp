@@ -31,6 +31,7 @@ class LoginActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
         binding.lnrDaftar.setOnClickListener {
             startActivity(Intent(this, RegisterActivity::class.java))
             finish()

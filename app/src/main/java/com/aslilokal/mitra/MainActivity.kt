@@ -7,7 +7,6 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import androidx.navigation.ui.NavigationUI
 import com.aslilokal.mitra.databinding.ActivityMainBinding
@@ -16,15 +15,13 @@ import com.aslilokal.mitra.ui.kelola.tambah.TambahProductActivity
 import com.aslilokal.mitra.ui.notifications.NotificationActivity
 import com.aslilokal.mitra.utils.KodelapoDataStore
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 
 
 class MainActivity : AppCompatActivity() {
-    //    val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
     private lateinit var binding: ActivityMainBinding
     private var datastore = KodelapoDataStore(this)
 
-    //val MainActivity.dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -35,7 +32,7 @@ class MainActivity : AppCompatActivity() {
         binding.fabMain.hide()
         binding.fabPesanan.hide()
 
-        lifecycleScope.launch {
+        runBlocking {
             val username = datastore.read("USERNAME").toString()
             val isLogin = datastore.read("ISLOGIN").toString()
 
@@ -114,6 +111,19 @@ class MainActivity : AppCompatActivity() {
                     true
                 }
                 else -> true
+            }
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        runBlocking {
+            val username = datastore.read("USERNAME").toString()
+            val isLogin = datastore.read("ISLOGIN").toString()
+
+            if (isLogin == "null") {
+                startActivity(Intent(binding.root.context, LoginActivity::class.java))
+                finish()
             }
         }
     }

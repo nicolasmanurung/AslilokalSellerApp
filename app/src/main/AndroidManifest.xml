@@ -30,7 +30,8 @@
             android:theme="@style/Theme.Design.Light.NoActionBar" />
         <activity
             android:name="com.aslilokal.mitra.ui.account.verify.AccountRegistrationActivity"
-            android:label="Verifikasi" />
+            android:label="Verifikasi"
+            android:theme="@style/Theme.Design.Light.NoActionBar"/>
         <activity
             android:name="com.aslilokal.mitra.ui.account.verify.VerifyEmailActivity"
             android:theme="@style/Theme.Design.Light.NoActionBar" />

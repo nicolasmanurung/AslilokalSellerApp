@@ -32,7 +32,6 @@ class BayarFragment : Fragment() {
     private lateinit var username: String
     private lateinit var token: String
 
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?

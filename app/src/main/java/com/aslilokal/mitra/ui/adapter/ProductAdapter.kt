@@ -33,7 +33,8 @@ class ProductAdapter :
                 .priority(Priority.HIGH)
                 .into(binding.imgProduct)
 
-            binding.txtCurrentPrice.text = product.priceProduct
+            binding.txtCurrentPrice.text =
+                CustomFunction().formatRupiah(product.priceProduct.toDouble())
             binding.txtNameProduct.text = product.nameProduct
             when (product.promoPrice?.toIntOrNull()) {
                 0 -> {
@@ -47,7 +48,8 @@ class ProductAdapter :
                 else -> {
                     binding.txtPromoPrice.text =
                         CustomFunction().formatRupiah(product.priceProduct.toDouble())
-                    binding.txtCurrentPrice.text = CustomFunction().formatRupiah(product.promoPrice.toDouble())
+                    binding.txtCurrentPrice.text =
+                        CustomFunction().formatRupiah(product.promoPrice.toDouble())
                     binding.lnrPromo.visibility = View.VISIBLE
                     val sumCount =
                         (product.promoPrice.toFloat().div(product.priceProduct.toFloat()))

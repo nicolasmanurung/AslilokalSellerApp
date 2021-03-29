@@ -11,7 +11,6 @@ import android.view.WindowManager
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
 import com.aslilokal.mitra.databinding.ActivityVerifyEmailBinding
 import com.aslilokal.mitra.model.data.api.ApiHelper
 import com.aslilokal.mitra.model.data.api.RetrofitInstance
@@ -20,7 +19,7 @@ import com.aslilokal.mitra.ui.account.AccountViewModel
 import com.aslilokal.mitra.utils.KodelapoDataStore
 import com.aslilokal.mitra.utils.Status
 import com.aslilokal.mitra.viewmodel.KodelapoViewModelProviderFactory
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import java.util.concurrent.TimeUnit
 
 
@@ -40,12 +39,11 @@ class VerifyEmailActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         hideProgress()
-
+        setupViewModel()
         emailSeller = intent.getStringExtra("emailSeller")!!
         binding.tvEmail.text = emailSeller
 
-        setupViewModel()
-        countDownTimer.start()
+        verifyToken = binding.etCode.text.toString()
 
         binding.etCode.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
@@ -53,12 +51,12 @@ class VerifyEmailActivity : AppCompatActivity() {
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 if (count == 6) {
-                    showProgress()
                     verifyToken = s.toString()
-
+                    //Toast.makeText(binding.root.context, s.toString(), Toast.LENGTH_SHORT).show()
                     binding.btnNextVerification.visibility = View.VISIBLE
 
-                    lifecycleScope.launch {
+                    runBlocking {
+                        showProgress()
                         val token = datastore.read("TOKEN").toString()
                         getToken(token, verifyToken)
                     }
@@ -74,16 +72,20 @@ class VerifyEmailActivity : AppCompatActivity() {
             }
         })
 
+        countDownTimer.start()
 
         binding.btnNextVerification.setOnClickListener {
-            lifecycleScope.launch {
+            showProgress()
+            verifyToken = binding.etCode.text.toString()
+            runBlocking {
+                //Toast.makeText(binding.root.context, verifyToken, Toast.LENGTH_SHORT).show()
                 val token = datastore.read("TOKEN").toString()
                 getToken(token, verifyToken)
             }
         }
 
         binding.txtResend.setOnClickListener {
-            lifecycleScope.launch {
+            runBlocking {
                 val token = datastore.read("TOKEN").toString()
                 postResubmitToken(token)
             }
@@ -187,7 +189,7 @@ class VerifyEmailActivity : AppCompatActivity() {
 
     private fun hideProgress() {
         binding.llProgressBar.progressbar.visibility = View.GONE
-        window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+        window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
     }
 
     private fun showProgress() {
@@ -197,6 +199,4 @@ class VerifyEmailActivity : AppCompatActivity() {
             WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
         )
     }
-
-
 }

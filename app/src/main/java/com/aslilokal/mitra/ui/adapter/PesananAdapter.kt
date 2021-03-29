@@ -8,11 +8,11 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
-import com.bumptech.glide.Priority
 import com.aslilokal.mitra.databinding.ItemPesananBinding
 import com.aslilokal.mitra.model.remote.response.ResultOrder
 import com.aslilokal.mitra.utils.Constants.Companion.BUCKET_PRODUCT_URL
+import com.bumptech.glide.Glide
+import com.bumptech.glide.Priority
 
 class PesananAdapter :
     RecyclerView.Adapter<PesananAdapter.PesananViewHolder>() {
@@ -37,7 +37,7 @@ class PesananAdapter :
             binding.txtItemCount.text = order.products.size.toString() + " item"
 
             when (order.statusOrder) {
-                "paymentrequired" -> {
+                "acceptrequired" -> {
                     binding.txtStatusOrder.text = "Menunggu konfirmasi"
                 }
                 "process" -> {

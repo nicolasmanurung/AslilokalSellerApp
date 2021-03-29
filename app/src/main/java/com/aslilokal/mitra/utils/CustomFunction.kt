@@ -63,10 +63,17 @@ class CustomFunction {
         return date.toIsoTime()
     }
 
+//    fun formatRupiah(number: Double): String? {
+//        val localeID = Locale("in", "ID")
+//        val formatRupiah: NumberFormat = NumberFormat.getCurrencyInstance(localeID)
+//        return formatRupiah.format(number)
+//    }
+
     fun formatRupiah(number: Double): String? {
         val localeID = Locale("in", "ID")
         val formatRupiah: NumberFormat = NumberFormat.getCurrencyInstance(localeID)
-        return formatRupiah.format(number)
+        var finalNumber = formatRupiah.format(number)
+        return finalNumber.replace(",00", "")
     }
 
     fun formateMonthAndYear(date: String): String {
