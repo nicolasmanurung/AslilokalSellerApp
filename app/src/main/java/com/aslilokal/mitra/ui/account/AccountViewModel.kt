@@ -2,14 +2,14 @@ package com.aslilokal.mitra.ui.account
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.liveData
-import com.aslilokal.mitra.model.data.repository.KodelapoRepository
+import com.aslilokal.mitra.model.data.repository.AslilokalRepository
 import com.aslilokal.mitra.model.remote.request.RegisterRequest
 import com.aslilokal.mitra.utils.Resource
 import kotlinx.coroutines.Dispatchers
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 
-class AccountViewModel(private val mainRepository: KodelapoRepository) : ViewModel() {
+class AccountViewModel(private val mainRepository: AslilokalRepository) : ViewModel() {
 
     fun postRegister(
         registerRequest: RegisterRequest
@@ -93,12 +93,16 @@ class AccountViewModel(private val mainRepository: KodelapoRepository) : ViewMod
         noWhatsappShop: RequestBody,
         isPickup: RequestBody,
         isDelivery: RequestBody,
-        freeOngkirLimitKm: RequestBody,
         addressShop: RequestBody,
-        postalCode: RequestBody,
+        postalCodeInput: RequestBody,
         isTwentyFourHours: RequestBody,
         openTime: RequestBody,
-        closeTime: RequestBody
+        closeTime: RequestBody,
+        cityId: RequestBody,
+        provinceId: RequestBody,
+        province: RequestBody,
+        cityName: RequestBody,
+        postalCodeRO: RequestBody
     ) = liveData(Dispatchers.IO) {
         emit(Resource.loading(data = null))
         try {
@@ -113,12 +117,12 @@ class AccountViewModel(private val mainRepository: KodelapoRepository) : ViewMod
                         noWhatsappShop,
                         isPickup,
                         isDelivery,
-                        freeOngkirLimitKm,
                         addressShop,
-                        postalCode,
+                        postalCodeInput,
                         isTwentyFourHours,
                         openTime,
-                        closeTime
+                        closeTime,
+                        cityId, provinceId, province, cityName, postalCodeRO
                     )
                 )
             )
@@ -130,7 +134,7 @@ class AccountViewModel(private val mainRepository: KodelapoRepository) : ViewMod
     fun putRegistrationShopSubmit(
         token: String,
         idUser: String,
-        status: RequestBody
+        status: String
     ) = liveData(Dispatchers.IO) {
         emit(Resource.loading(data = null))
         try {

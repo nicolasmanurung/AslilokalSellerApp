@@ -8,6 +8,7 @@
     <uses-permission
         android:name="android.permission.WRITE_EXTERNAL_STORAGE"
         tools:ignore="ScopedStorage" />
+    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
 
     <application
         android:allowBackup="true"
@@ -19,30 +20,37 @@
         android:theme="@style/Theme.KodelapoMitraApps"
         android:usesCleartextTraffic="true"
         tools:targetApi="m">
+        <activity android:name="com.aslilokal.mitra.ui.account.verify.review.ReviewPageActivity"></activity>
         <activity
-            android:name="com.aslilokal.mitra.ui.debtor.tambah.TambahDebtorActivity"
+            android:name=".ui.analitik.pencairan.pengajuan.PengajuanPencairanActivity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+        <activity
+            android:name=".ui.profil.edit.EditShopInfoActivity"
             android:theme="@style/Theme.Design.Light.NoActionBar" />
         <activity
-            android:name="com.aslilokal.mitra.ui.debtor.detail.DetailDebtorActivity"
+            android:name=".ui.debtor.tambah.TambahDebtorActivity"
             android:theme="@style/Theme.Design.Light.NoActionBar" />
         <activity
-            android:name="com.aslilokal.mitra.ui.debtor.list.ListAllDebtorActivity"
+            android:name=".ui.debtor.detail.DetailDebtorActivity"
             android:theme="@style/Theme.Design.Light.NoActionBar" />
         <activity
-            android:name="com.aslilokal.mitra.ui.account.verify.AccountRegistrationActivity"
+            android:name=".ui.debtor.list.ListAllDebtorActivity"
+            android:theme="@style/Theme.Design.Light.NoActionBar" />
+        <activity
+            android:name=".ui.account.verify.AccountRegistrationActivity"
             android:label="Verifikasi"
-            android:theme="@style/Theme.Design.Light.NoActionBar"/>
-        <activity
-            android:name="com.aslilokal.mitra.ui.account.verify.VerifyEmailActivity"
             android:theme="@style/Theme.Design.Light.NoActionBar" />
         <activity
-            android:name="com.aslilokal.mitra.ui.pesanan.detail.DetailPesananActivity"
+            android:name=".ui.account.verify.VerifyEmailActivity"
             android:theme="@style/Theme.Design.Light.NoActionBar" />
         <activity
-            android:name="com.aslilokal.mitra.ui.notifications.NotificationActivity"
+            android:name=".ui.pesanan.detail.DetailPesananActivity"
             android:theme="@style/Theme.Design.Light.NoActionBar" />
         <activity
-            android:name="com.aslilokal.mitra.ui.kelola.edit.EditProductActivity"
+            android:name=".ui.notifications.NotificationActivity"
+            android:theme="@style/Theme.Design.Light.NoActionBar" />
+        <activity
+            android:name=".ui.kelola.edit.EditProductActivity"
             android:theme="@style/Theme.Design.Light.NoActionBar" />
 
         <provider
@@ -56,18 +64,18 @@
         </provider>
 
         <activity
-            android:name="com.aslilokal.mitra.ui.kelola.tambah.TambahProductActivity"
+            android:name=".ui.kelola.tambah.TambahProductActivity"
             android:theme="@style/Theme.Design.Light.NoActionBar" />
         <activity
-            android:name="com.aslilokal.mitra.ui.account.login.LoginActivity"
+            android:name=".ui.account.login.LoginActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.Design.Light.NoActionBar" />
         <activity
-            android:name="com.aslilokal.mitra.ui.account.register.RegisterActivity"
+            android:name=".ui.account.register.RegisterActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.Design.Light.NoActionBar" />
         <activity
-            android:name="com.aslilokal.mitra.MainActivity"
+            android:name=".MainActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.MaterialComponents.DayNight.NoActionBar">
@@ -81,6 +89,16 @@
         <meta-data
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />
+
+        <service
+            android:name=".service.FCMService"
+            android:exported="false"
+            android:permission="com.google.android.c2dm.permission.SEND">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+            </intent-filter>
+        </service>
     </application>
 
 </manifest>

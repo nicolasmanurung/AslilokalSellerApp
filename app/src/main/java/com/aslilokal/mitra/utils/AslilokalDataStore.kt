@@ -6,9 +6,9 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import kotlinx.coroutines.flow.first
 
-private val Context.dataStore by preferencesDataStore("settings")
+private val Context.dataStore by preferencesDataStore("sellersettings")
 
-class KodelapoDataStore(context: Context) {
+class AslilokalDataStore(context: Context) {
     private val dataStore = context.dataStore
 
     suspend fun save(key: String, value: String) {

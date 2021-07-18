@@ -13,9 +13,9 @@ import com.aslilokal.mitra.databinding.FragmentSubmitRegistrationBinding
 import com.aslilokal.mitra.model.data.api.ApiHelper
 import com.aslilokal.mitra.model.data.api.RetrofitInstance
 import com.aslilokal.mitra.ui.account.AccountViewModel
-import com.aslilokal.mitra.utils.KodelapoDataStore
+import com.aslilokal.mitra.utils.AslilokalDataStore
 import com.aslilokal.mitra.utils.Status
-import com.aslilokal.mitra.viewmodel.KodelapoViewModelProviderFactory
+import com.aslilokal.mitra.viewmodel.AslilokalVMProviderFactory
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -30,7 +30,7 @@ class SubmitRegistrationFragment : Fragment() {
     private lateinit var viewModel: AccountViewModel
     private lateinit var token: String
     private lateinit var idSellerAccount: String
-    private lateinit var datastore: KodelapoDataStore
+    private lateinit var datastore: AslilokalDataStore
     private lateinit var accountRegistrationActivity: AccountRegistrationActivity
 
     //    val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
@@ -39,7 +39,7 @@ class SubmitRegistrationFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentSubmitRegistrationBinding.inflate(inflater, container, false)
-        datastore = KodelapoDataStore(binding.root.context)
+        datastore = AslilokalDataStore(binding.root.context)
         accountRegistrationActivity = activity as AccountRegistrationActivity
 
         runBlocking {
@@ -72,12 +72,12 @@ class SubmitRegistrationFragment : Fragment() {
     private fun setupViewModel() {
         viewModel = ViewModelProvider(
             viewModelStore,
-            KodelapoViewModelProviderFactory(ApiHelper(RetrofitInstance.api))
+            AslilokalVMProviderFactory(ApiHelper(RetrofitInstance.api))
         ).get(AccountViewModel::class.java)
     }
 
     private fun setupObservable() {
-        var status = "review".toRequestBody("text/plain".toMediaTypeOrNull())
+        var status = "review"
         viewModel.putRegistrationShopSubmit(
             token,
             idSellerAccount,
@@ -91,12 +91,11 @@ class SubmitRegistrationFragment : Fragment() {
                                 GlobalScope.launch(Dispatchers.IO) {
                                     datastore.save(
                                         "ISLOGIN",
-                                        "true"
+                                        "review"
                                     )
                                 }
                                 accountRegistrationActivity.hideProgress()
                                 val intent = Intent(activity, MainActivity::class.java)
-                                intent.putExtra("ISLOGIN", "true")
                                 startActivity(intent)
                                 activity?.finish()
                             }

@@ -35,7 +35,6 @@ class DebtorAdapter : RecyclerView.Adapter<DebtorAdapter.DebtorViewHolder>() {
         override fun areContentsTheSame(oldItem: DebtorItem, newItem: DebtorItem): Boolean {
             return oldItem == newItem
         }
-
     }
 
     val differ = AsyncListDiffer(this, differCallback)

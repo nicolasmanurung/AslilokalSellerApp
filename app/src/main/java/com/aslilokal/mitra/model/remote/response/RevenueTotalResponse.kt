@@ -5,9 +5,9 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class RevenueTotalResponse(
-    val idSellerAccount: String,
-    val sumSaldo: Int,
-    val result: RevenueTotal? = null
+    val message: String,
+    val result: RevenueTotal,
+    val success: Boolean
 ) : Parcelable
 
 @Parcelize

@@ -18,7 +18,7 @@ class PencairanAdapter : RecyclerView.Adapter<PencairanAdapter.PencairanViewHold
             binding.txtName.text =
                 "${pencairan.informationPayment.providerPayment} - ${pencairan.informationPayment.numberPayment}"
             binding.txtDesc.text =
-                "Dibuat pada ${CustomFunction().isoTimeToDateMonth(pencairan.createdAt)}"
+                "Dibuat pada ${pencairan.createdAt?.let { CustomFunction().isoTimeToDateMonth(it) }}"
             when (pencairan.statusRevenue) {
                 "request" -> {
                     binding.txtStatus.text = "Diproses"

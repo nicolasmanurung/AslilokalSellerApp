@@ -1,7 +1,7 @@
 package com.aslilokal.mitra.ui.debtor
 
 import androidx.lifecycle.*
-import com.aslilokal.mitra.model.data.repository.KodelapoRepository
+import com.aslilokal.mitra.model.data.repository.AslilokalRepository
 import com.aslilokal.mitra.model.remote.response.DebtorItem
 import com.aslilokal.mitra.model.remote.response.DebtorResponse
 import com.aslilokal.mitra.utils.Resource
@@ -11,7 +11,7 @@ import kotlinx.coroutines.launch
 import retrofit2.Response
 import java.io.IOException
 
-class DebtorViewModel(private val mainRepository: KodelapoRepository) : ViewModel() {
+class DebtorViewModel(private val mainRepository: AslilokalRepository) : ViewModel() {
     val debtors: MutableLiveData<ResourcePagination<DebtorResponse>> = MutableLiveData()
     var debtorResponse: DebtorResponse? = null
 

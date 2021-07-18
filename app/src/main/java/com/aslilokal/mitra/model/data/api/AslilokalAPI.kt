@@ -9,7 +9,7 @@ import okhttp3.RequestBody.Companion.toRequestBody
 import retrofit2.Response
 import retrofit2.http.*
 
-interface KodelapoAPI {
+interface AslilokalAPI {
 
     @Headers("Content-Type:application/json")
     @POST("seller/login")
@@ -31,6 +31,14 @@ interface KodelapoAPI {
         @Header("Authorization") token: String,
         @Path("idSeller") idSeller: String
     ): Response<ShopResponse>
+
+    @Headers("Content-Type:application/json")
+    @PUT("seller/shop/detail/{idSeller}")
+    suspend fun putShopInfo(
+        @Header("Authorization") token: String,
+        @Path("idSeller") idSeller: String,
+        @Body shopData: Shop
+    ): Response<StatusResponse>
 
     @Multipart
     @POST("seller/product/")
@@ -86,6 +94,12 @@ interface KodelapoAPI {
         @Body pesananRequest: PesananRequest
     ): Response<StatusResponse>
 
+    @GET("seller/order/detail/{idOrder}")
+    suspend fun getDetailOrder(
+        @Header("Authorization") key: String,
+        @Path("idOrder") idOrder: String
+    ): Response<DetailOrderResponse>
+
     @Headers("Content-Type:application/json")
     @GET("seller/notifications/{idSeller}")
     suspend fun getAllNotificationSeller(
@@ -140,19 +154,26 @@ interface KodelapoAPI {
         @Part("noWhatsappShop") noWhatsappShop: RequestBody,
         @Part("isPickup") isPickup: RequestBody,
         @Part("isDelivery") isDelivery: RequestBody,
-        @Part("freeOngkirLimitKm") freeOngkirLimitKm: RequestBody,
+//        @Part("freeOngkirLimitKm") freeOngkirLimitKm: RequestBody,
         @Part("addressShop") addressShop: RequestBody,
-        @Part("postalCode") postalCode: RequestBody,
+        @Part("postalCodeInput") postalCode: RequestBody,
         @Part("isTwentyFourHours") isTwentyFourHours: RequestBody,
         @Part("openTime") openTime: RequestBody? = "".toRequestBody("text/plain".toMediaTypeOrNull()),
-        @Part("closeTime") closeTime: RequestBody? = "".toRequestBody("text/plain".toMediaTypeOrNull())
+        @Part("closeTime") closeTime: RequestBody? = "".toRequestBody("text/plain".toMediaTypeOrNull()),
+//        RO DATA
+        @Part("city_id") cityId: RequestBody,
+        @Part("province_id") provinceId: RequestBody,
+        @Part("province") province: RequestBody,
+        @Part("city_name") cityName: RequestBody,
+        @Part("postal_code") postalCodeRO: RequestBody
     ): Response<StatusResponse>
 
+    @FormUrlEncoded
     @PUT("seller/shop/request/{idUser}")
     suspend fun putRegistrationSubmit(
         @Header("Authorization") token: String,
         @Path("idUser") idUser: String,
-        @Body status: RequestBody
+        @Field("status") status: String
     ): Response<StatusResponse>
 
     @GET("seller/debtors/{idUser}")
@@ -212,5 +233,36 @@ interface KodelapoAPI {
     suspend fun postOneVoucher(
         @Header("Authorization") token: String,
         @Body oneVoucher: VoucherItem
-    ) : Response<StatusResponse>
+    ): Response<StatusResponse>
+
+    @GET("starter/city")
+    suspend fun ROGetCities(
+        @Header("key") key: String
+    ): Response<ROCityResponse>
+
+    @POST("fcm/send")
+    suspend fun postBuyerNotificationOrderFirebase(
+        @Header("Authorization") key: String,
+        @Body fcmBuyer: FCMBuyerRequest
+    ): Response<FCMBuyerResponse>
+
+    @Multipart
+    @PUT("seller/update/imgshop")
+    suspend fun putImageShopUpdate(
+        @Header("Authorization") key: String,
+        @Part("imgKey") imgKey: RequestBody,
+        @Part imgShopImgUpdate: MultipartBody.Part
+    ): Response<StatusResponse>
+
+    @GET("seller/account/status/{idUser}")
+    suspend fun getStatusShopVerify(
+        @Header("Authorization") key: String,
+        @Path("idUser") username: String
+    ): Response<LoginResponse>
+
+    @GET("seller/account/detail/{idUser}")
+    suspend fun getSellerBiodata(
+        @Header("Authorization") key: String,
+        @Path("idUser") username: String
+    ): Response<SellerBiodataResponse>
 }

@@ -11,6 +11,8 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.View
 import android.view.WindowManager
 import android.widget.ArrayAdapter
@@ -21,18 +23,18 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.FileProvider
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
-import com.bumptech.glide.Glide
-import com.bumptech.glide.Priority
-import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.aslilokal.mitra.databinding.ActivityEditProductBinding
 import com.aslilokal.mitra.model.data.api.ApiHelper
 import com.aslilokal.mitra.model.data.api.RetrofitInstance
 import com.aslilokal.mitra.model.remote.request.OneProduct
+import com.aslilokal.mitra.utils.AslilokalDataStore
 import com.aslilokal.mitra.utils.Constants.Companion.BUCKET_PRODUCT_URL
 import com.aslilokal.mitra.utils.CustomFunction
-import com.aslilokal.mitra.utils.KodelapoDataStore
 import com.aslilokal.mitra.utils.Status
-import com.aslilokal.mitra.viewmodel.KodelapoViewModelProviderFactory
+import com.aslilokal.mitra.viewmodel.AslilokalVMProviderFactory
+import com.bumptech.glide.Glide
+import com.bumptech.glide.Priority
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import id.zelory.compressor.Compressor
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
@@ -50,7 +52,7 @@ class EditProductActivity : AppCompatActivity() {
     //    val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
     private lateinit var binding: ActivityEditProductBinding
     private lateinit var viewModel: EditViewModel
-    private var datastore = KodelapoDataStore(this)
+    private lateinit var datastore : AslilokalDataStore
     private lateinit var foto: MultipartBody.Part
 
     // Untuk di update
@@ -81,7 +83,7 @@ class EditProductActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityEditProductBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
+        datastore = AslilokalDataStore(binding.root.context)
         idProduct = intent.getStringExtra("idProduct")!!
 
         showProgress()
@@ -131,7 +133,7 @@ class EditProductActivity : AppCompatActivity() {
     private fun setupViewModel() {
         viewModel = ViewModelProvider(
             this,
-            KodelapoViewModelProviderFactory(ApiHelper(RetrofitInstance.api))
+            AslilokalVMProviderFactory(ApiHelper(RetrofitInstance.api))
         ).get(EditViewModel::class.java)
     }
 
@@ -292,6 +294,7 @@ class EditProductActivity : AppCompatActivity() {
         } else {
             binding.etPromosi.cleanIntValue.toString()
         }
+
         isAvailable = binding.switchIsAvailable.isChecked
     }
 
@@ -303,6 +306,12 @@ class EditProductActivity : AppCompatActivity() {
             .skipMemoryCache(true)
             .priority(Priority.HIGH)
             .into(binding.imageProduct)
+
+        if (response.promoPrice != 0 || response.promoPrice != null) {
+            binding.txtDeletePromotion.visibility = View.VISIBLE
+        } else {
+            binding.txtDeletePromotion.visibility = View.GONE
+        }
 
         nameProduct = response.nameProduct
         productWeight = response.productWeight.toString()
@@ -332,6 +341,7 @@ class EditProductActivity : AppCompatActivity() {
         binding.etPromosi.setSpacing(false)
         binding.etPromosi.setSeparator(".")
 
+
         tempEt.setText(nameProduct)
         binding.etNameProduct.text = tempEt.editableText
         tempEt.setText(productWeight)
@@ -343,6 +353,39 @@ class EditProductActivity : AppCompatActivity() {
         tempEt.setText(promoPrice)
         binding.etPromosi.text = tempEt.editableText
         binding.switchIsAvailable.isChecked = isAvailable as Boolean
+
+        binding.txtDeletePromotion.setOnClickListener {
+            promoPrice = 0.toString()
+            tempEt.setText(promoPrice)
+            binding.etPromosi.text = tempEt.editableText
+            binding.txtDeletePromotion.visibility = View.GONE
+        }
+
+        binding.etPromosi.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+            }
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                if (binding.etPromosi.cleanIntValue > binding.etHargaProduct.cleanIntValue) {
+                    binding.ubahTambah.isEnabled = false
+                    binding.ubahTambah.isActivated = false
+                    Toast.makeText(
+                        binding.root.context,
+                        "Harga promosi tidak boleh lebih besar dari harga awal",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                } else if (binding.etPromosi.equals("") || binding.etPromosi.cleanIntValue == 0) {
+                    binding.ubahTambah.isEnabled = true
+                    binding.ubahTambah.isActivated = true
+                } else {
+                    binding.ubahTambah.isEnabled = true
+                    binding.ubahTambah.isActivated = true
+                }
+            }
+
+            override fun afterTextChanged(s: Editable?) {
+            }
+        })
     }
 
     private fun onAlertTakeImage() {
@@ -378,7 +421,7 @@ class EditProductActivity : AppCompatActivity() {
         }
 
         builder.setNegativeButton("Lihat gambar") { dialog, id ->
-            Toast.makeText(this, imageProduct, Toast.LENGTH_SHORT).show()
+            //Toast.makeText(this, imageProduct, Toast.LENGTH_SHORT).show()
         }
         builder.show()
     }

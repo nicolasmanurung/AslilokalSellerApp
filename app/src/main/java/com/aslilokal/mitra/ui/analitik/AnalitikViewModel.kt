@@ -5,11 +5,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.liveData
 import androidx.lifecycle.viewModelScope
-import com.aslilokal.mitra.model.data.repository.KodelapoRepository
-import com.aslilokal.mitra.model.remote.response.OrderResponse
-import com.aslilokal.mitra.model.remote.response.RevenueResponse
-import com.aslilokal.mitra.model.remote.response.VoucherItem
-import com.aslilokal.mitra.model.remote.response.VoucherResponse
+import com.aslilokal.mitra.model.data.repository.AslilokalRepository
+import com.aslilokal.mitra.model.remote.response.*
 import com.aslilokal.mitra.utils.Resource
 import com.aslilokal.mitra.utils.ResourcePagination
 import kotlinx.coroutines.Dispatchers
@@ -17,7 +14,7 @@ import kotlinx.coroutines.launch
 import retrofit2.Response
 import java.io.IOException
 
-class AnalitikViewModel(private val mainRepository: KodelapoRepository) : ViewModel() {
+class AnalitikViewModel(private val mainRepository: AslilokalRepository) : ViewModel() {
     val latestOrderFinish: MutableLiveData<ResourcePagination<OrderResponse>> = MutableLiveData()
     var latestOrderResponse: OrderResponse? = null
 

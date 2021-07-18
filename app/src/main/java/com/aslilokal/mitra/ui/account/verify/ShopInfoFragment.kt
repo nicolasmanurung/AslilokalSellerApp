@@ -11,6 +11,7 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -20,6 +21,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.FileProvider
 import androidx.core.content.PermissionChecker
+import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -27,10 +29,14 @@ import com.aslilokal.mitra.R
 import com.aslilokal.mitra.databinding.FragmentShopInfoBinding
 import com.aslilokal.mitra.model.data.api.ApiHelper
 import com.aslilokal.mitra.model.data.api.RetrofitInstance
+import com.aslilokal.mitra.model.remote.response.City
 import com.aslilokal.mitra.ui.account.AccountViewModel
-import com.aslilokal.mitra.utils.KodelapoDataStore
+import com.aslilokal.mitra.utils.AslilokalDataStore
+import com.aslilokal.mitra.utils.Constants.Companion.RO_KEY_ID
+import com.aslilokal.mitra.utils.ResourcePagination
 import com.aslilokal.mitra.utils.Status
-import com.aslilokal.mitra.viewmodel.KodelapoViewModelProviderFactory
+import com.aslilokal.mitra.viewmodel.AslilokalVMProviderFactory
+import com.aslilokal.mitra.viewmodel.ROViewModel
 import id.zelory.compressor.Compressor
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
@@ -51,14 +57,17 @@ class ShopInfoFragment : Fragment() {
     private val REQUEST_CODE = 13
 
     private lateinit var viewModel: AccountViewModel
-    private lateinit var datastore: KodelapoDataStore
+    private lateinit var ROviewmodel: ROViewModel
+    private var isSellectAutocomplete: Boolean? = false
+    private lateinit var datastore: AslilokalDataStore
     private lateinit var tempEt: EditText
+    private lateinit var listCity: ArrayList<City>
 
     private lateinit var imgShopRequestFile: RequestBody
 
     private lateinit var fotoShop: MultipartBody.Part
 
-    // Data from
+    // Data form
     private lateinit var token: String
     private lateinit var idSellerAccount: RequestBody
     private lateinit var nameShop: RequestBody
@@ -66,17 +75,23 @@ class ShopInfoFragment : Fragment() {
     private lateinit var noWhatsappShop: RequestBody
     private lateinit var isPickup: RequestBody
     private lateinit var isDelivery: RequestBody
-    private lateinit var freeOngkirLimitKm: RequestBody
     private lateinit var addressShop: RequestBody
     private lateinit var isTwentyFourHours: RequestBody
     private lateinit var openTime: RequestBody
     private lateinit var closeTime: RequestBody
     private lateinit var postalCode: RequestBody
 
+    //RO Data form
+    private lateinit var cityId: RequestBody
+    private lateinit var provinceId: RequestBody
+    private lateinit var province: RequestBody
+    private lateinit var cityName: RequestBody
+    private lateinit var postalCodeRO: RequestBody
+
     // Temp Var
     private var tempDelivery: String = ""
     private var tempPickup: String = ""
-    private var tempFreeDelivery: String = ""
+    //private var tempFreeDelivery: String = ""
 
     companion object {
         private const val IMAGE_CHOOSE = 1000
@@ -91,16 +106,22 @@ class ShopInfoFragment : Fragment() {
         _binding = FragmentShopInfoBinding.inflate(layoutInflater, container, false)
         // Inflate the layout for this fragment
         accountRegistrationActivity = activity as AccountRegistrationActivity
+        accountRegistrationActivity.showProgress()
+
         tempEt = EditText(binding.root.context)
-        datastore = KodelapoDataStore(binding.root.context)
+        datastore = AslilokalDataStore(binding.root.context)
+
+        setupROViewmodel()
+        setupViewModel()
 
         runBlocking {
             token = datastore.read("TOKEN").toString()
-            val username = datastore.read("USERNAME").toString()
-            idSellerAccount = username.toRequestBody("text/plain".toMediaTypeOrNull())
+            idSellerAccount = datastore.read("USERNAME").toString()
+                .toRequestBody("text/plain".toMediaTypeOrNull())
+            ROviewmodel.getCitiesByRO(RO_KEY_ID)
         }
 
-        setupViewModel()
+        setupROObserver()
 
         ArrayAdapter.createFromResource(
             binding.root.context,
@@ -135,6 +156,22 @@ class ShopInfoFragment : Fragment() {
             }
         }
 
+        binding.originLocation.addTextChangedListener {
+            if (it?.isNotEmpty() == true) {
+                binding.txtChangeProvince.visibility = View.VISIBLE
+            }
+            if (getCityFromAutocomplete(it.toString()) == null) {
+                isSellectAutocomplete = false
+            } else {
+                isSellectAutocomplete = false
+                binding.txtChangeProvince.visibility = View.GONE
+            }
+        }
+
+        binding.txtChangeProvince.setOnClickListener {
+            isSellectAutocomplete = false
+            binding.originLocation.setText("")
+        }
 
         binding.etStartOpen.setOnFocusChangeListener { v, hasFocus ->
             if (hasFocus) {
@@ -160,8 +197,8 @@ class ShopInfoFragment : Fragment() {
         tempDelivery =
             binding.deliverySpinner.selectedItem.toString().toLowerCase(Locale.getDefault())
         tempPickup = binding.pickupSpinner.selectedItem.toString().toLowerCase(Locale.getDefault())
-        tempFreeDelivery =
-            binding.freeOngkirSpinner.selectedItem.toString().toLowerCase(Locale.getDefault())
+
+        //tempFreeDelivery = binding.freeOngkirSpinner.selectedItem.toString().toLowerCase(Locale.getDefault())
 
         tempDelivery = if (tempDelivery == "ya") {
             "true"
@@ -175,11 +212,11 @@ class ShopInfoFragment : Fragment() {
             "false"
         }
 
-        tempFreeDelivery = if (tempFreeDelivery == "ya") {
-            "true"
-        } else {
-            "false"
-        }
+//        tempFreeDelivery = if (tempFreeDelivery == "ya") {
+//            "true"
+//        } else {
+//            "false"
+//        }
 
         return binding.root
     }
@@ -199,6 +236,24 @@ class ShopInfoFragment : Fragment() {
             minutes,
             true
         ).show()
+    }
+
+    private fun getCityFromAutocomplete(city: String): City? {
+        if (isSellectAutocomplete == true) {
+            val textCity = city.split(", ")
+
+            val tempCity = listCity.filter {
+                it.city_name.contains(textCity[1]) ?: false
+            }
+
+            for (i in tempCity.indices) {
+                val matchedCity = tempCity[i].city_name ?: ""
+                if (tempCity[i].city_name == matchedCity) {
+                    return tempCity[i]
+                }
+            }
+        }
+        return null
     }
 
     private fun getCloseTime() {
@@ -221,8 +276,15 @@ class ShopInfoFragment : Fragment() {
     private fun setupViewModel() {
         viewModel = ViewModelProvider(
             viewModelStore,
-            KodelapoViewModelProviderFactory(ApiHelper(RetrofitInstance.api))
+            AslilokalVMProviderFactory(ApiHelper(RetrofitInstance.api))
         ).get(AccountViewModel::class.java)
+    }
+
+    private fun setupROViewmodel() {
+        ROviewmodel = ViewModelProvider(
+            viewModelStore,
+            AslilokalVMProviderFactory(ApiHelper(RetrofitInstance.apiRO))
+        ).get(ROViewModel::class.java)
     }
 
     private fun onAlertDialog() {
@@ -258,12 +320,13 @@ class ShopInfoFragment : Fragment() {
             noWhatsappShop,
             isPickup,
             isDelivery,
-            freeOngkirLimitKm,
             addressShop,
             postalCode,
             isTwentyFourHours,
             openTime,
-            closeTime
+            closeTime,
+            cityId, provinceId, province, cityName, postalCodeRO
+
         ).observe(viewLifecycleOwner, {
             it.let { resource ->
                 when (resource.status) {
@@ -299,6 +362,49 @@ class ShopInfoFragment : Fragment() {
         })
     }
 
+    private fun setupROObserver() {
+        ROviewmodel.citiesResults.observe(viewLifecycleOwner, { response ->
+            when (response) {
+                is ResourcePagination.Success -> {
+                    response.data.let { cityResponse ->
+                        accountRegistrationActivity.hideProgress()
+                        initSpinner(cityResponse?.rajaongkir?.results ?: return@observe)
+                    }
+                }
+
+                is ResourcePagination.Loading -> {
+                    accountRegistrationActivity.showProgress()
+                }
+
+                is ResourcePagination.Error -> {
+//                    hideProgress()
+                    Toast.makeText(
+                        binding.root.context,
+                        response.message,
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
+        })
+    }
+
+    private fun initSpinner(cityResults: ArrayList<City>) {
+        listCity = cityResults
+        val cities = mutableListOf<String>()
+        for (i in cityResults.indices) cities.add(
+            cityResults[i].province + ", " + cityResults[i].city_name ?: ""
+        )
+        val cityAdapter = ArrayAdapter(
+            binding.root.context,
+            android.R.layout.simple_spinner_dropdown_item,
+            cities
+        )
+        binding.originLocation.setAdapter(cityAdapter)
+        binding.originLocation.setOnItemClickListener { parent, view, position, id ->
+            isSellectAutocomplete = true
+        }
+    }
+
     fun alertDialogSubmit() {
         val builder = AlertDialog.Builder(binding.root.context)
         // set title
@@ -322,11 +428,14 @@ class ShopInfoFragment : Fragment() {
     }
 
     private fun setupData() {
+        if (getCityFromAutocomplete(binding.originLocation.text.toString()) == null) {
+            binding.originLocation.error = "Isi sesuai pilihan"
+        }
         if (binding.etNameShop.text.toString().isEmpty() || binding.etShopTelpNumber.text.toString()
                 .isEmpty() || binding.etWhatsappNumber.text.toString()
                 .isEmpty() || binding.etAddressShop.text.toString()
                 .isEmpty() || binding.etPostalCode.text.toString()
-                .isEmpty() || tempPickup == "" || tempDelivery == "" || tempFreeDelivery == "" || binding.txtFotoShopNameFile.text.toString() == ""
+                .isEmpty() || tempPickup == "" || tempDelivery == "" || binding.txtFotoShopNameFile.text.toString() == ""
         ) {
             Toast.makeText(
                 binding.root.context,
@@ -343,6 +452,19 @@ class ShopInfoFragment : Fragment() {
                     Toast.LENGTH_SHORT
                 ).show()
             } else {
+                val tempCity = getCityFromAutocomplete(binding.originLocation.text.toString())
+                Log.d("TEMPCITY", tempCity.toString())
+                cityId =
+                    tempCity?.city_id.toString().toRequestBody("text/plain".toMediaTypeOrNull())
+                provinceId =
+                    tempCity?.province_id.toString().toRequestBody("text/plain".toMediaTypeOrNull())
+                province =
+                    tempCity?.province.toString().toRequestBody("text/plain".toMediaTypeOrNull())
+                cityName =
+                    tempCity?.city_name.toString().toRequestBody("text/plain".toMediaTypeOrNull())
+                postalCodeRO =
+                    tempCity?.postal_code.toString().toRequestBody("text/plain".toMediaTypeOrNull())
+
                 nameShop = binding.etNameShop.text.toString()
                     .toRequestBody("text/plain".toMediaTypeOrNull())
                 noTelpSeller = binding.etShopTelpNumber.text.toString()
@@ -351,7 +473,9 @@ class ShopInfoFragment : Fragment() {
                     .toRequestBody("text/plain".toMediaTypeOrNull())
                 isPickup = tempPickup.toRequestBody("text/plain".toMediaTypeOrNull())
                 isDelivery = tempDelivery.toRequestBody("text/plain".toMediaTypeOrNull())
-                freeOngkirLimitKm = tempFreeDelivery.toRequestBody("text/plain".toMediaTypeOrNull())
+
+                //freeOngkirLimitKm = tempFreeDelivery.toRequestBody("text/plain".toMediaTypeOrNull())
+
                 addressShop = binding.etAddressShop.text.toString()
                     .toRequestBody("text/plain".toMediaTypeOrNull())
                 postalCode = binding.etPostalCode.text.toString()
@@ -371,7 +495,11 @@ class ShopInfoFragment : Fragment() {
                     shopImg.name,
                     imgShopRequestFile
                 )
-                setupObserver()
+                if (tempCity != null) {
+                    setupObserver()
+                } else {
+                    binding.originLocation.error = "Harap isi sesuai pilihan"
+                }
             }
         }
     }

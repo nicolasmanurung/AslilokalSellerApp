@@ -15,23 +15,23 @@ import com.aslilokal.mitra.ui.account.AccountViewModel
 import com.aslilokal.mitra.ui.account.login.LoginActivity
 import com.aslilokal.mitra.ui.account.verify.AccountRegistrationActivity
 import com.aslilokal.mitra.ui.account.verify.VerifyEmailActivity
-import com.aslilokal.mitra.utils.KodelapoDataStore
+import com.aslilokal.mitra.utils.AslilokalDataStore
 import com.aslilokal.mitra.utils.Status
-import com.aslilokal.mitra.viewmodel.KodelapoViewModelProviderFactory
+import com.aslilokal.mitra.viewmodel.AslilokalVMProviderFactory
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
 class RegisterActivity : AppCompatActivity() {
-    //    val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
     private lateinit var binding: ActivityRegisterBinding
     private lateinit var viewModel: AccountViewModel
-    private var datastore = KodelapoDataStore(this)
+    private lateinit var datastore : AslilokalDataStore
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityRegisterBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        datastore = AslilokalDataStore(binding.root.context)
         hideProgressBar()
         binding.lnrLogin.setOnClickListener {
             startActivity(Intent(this, LoginActivity::class.java))
@@ -64,7 +64,7 @@ class RegisterActivity : AppCompatActivity() {
     private fun setupViewModel() {
         viewModel = ViewModelProvider(
             this,
-            KodelapoViewModelProviderFactory(ApiHelper(RetrofitInstance.api))
+            AslilokalVMProviderFactory(ApiHelper(RetrofitInstance.api))
         ).get(AccountViewModel::class.java)
     }
 

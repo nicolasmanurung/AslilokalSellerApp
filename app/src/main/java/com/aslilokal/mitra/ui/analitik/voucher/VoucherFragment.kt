@@ -21,10 +21,10 @@ import com.aslilokal.mitra.model.remote.response.VoucherItem
 import com.aslilokal.mitra.ui.adapter.VoucherAdapter
 import com.aslilokal.mitra.ui.analitik.AnalitikViewModel
 import com.aslilokal.mitra.utils.CustomFunction
-import com.aslilokal.mitra.utils.KodelapoDataStore
+import com.aslilokal.mitra.utils.AslilokalDataStore
 import com.aslilokal.mitra.utils.ResourcePagination
 import com.aslilokal.mitra.utils.Status
-import com.aslilokal.mitra.viewmodel.KodelapoViewModelProviderFactory
+import com.aslilokal.mitra.viewmodel.AslilokalVMProviderFactory
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import java.util.*
@@ -34,7 +34,7 @@ class VoucherFragment : Fragment() {
     private var _binding: FragmentVoucherBinding? = null
     private val binding get() = _binding!!
     private lateinit var viewModel: AnalitikViewModel
-    private lateinit var datastore: KodelapoDataStore
+    private lateinit var datastore: AslilokalDataStore
     private lateinit var username: String
     private lateinit var token: String
     private lateinit var voucherAdapter: VoucherAdapter
@@ -47,7 +47,7 @@ class VoucherFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentVoucherBinding.inflate(inflater, container, false)
-        datastore = KodelapoDataStore(binding.root.context)
+        datastore = AslilokalDataStore(binding.root.context)
 
         showLoadingList()
 
@@ -121,7 +121,7 @@ class VoucherFragment : Fragment() {
     private fun setupViewModel() {
         viewModel = ViewModelProvider(
             viewModelStore,
-            KodelapoViewModelProviderFactory(ApiHelper(RetrofitInstance.api))
+            AslilokalVMProviderFactory(ApiHelper(RetrofitInstance.api))
         ).get(AnalitikViewModel::class.java)
     }
 

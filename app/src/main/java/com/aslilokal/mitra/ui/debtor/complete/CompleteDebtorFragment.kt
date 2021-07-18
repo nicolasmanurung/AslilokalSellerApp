@@ -1,6 +1,7 @@
 package com.aslilokal.mitra.ui.debtor.complete
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,29 +16,19 @@ import com.aslilokal.mitra.ui.adapter.DebtorAdapter
 import com.aslilokal.mitra.ui.debtor.DebtorViewModel
 import com.aslilokal.mitra.ui.debtor.list.ListAllDebtorActivity
 import com.aslilokal.mitra.utils.ResourcePagination
-import com.aslilokal.mitra.viewmodel.KodelapoViewModelProviderFactory
+import com.aslilokal.mitra.viewmodel.AslilokalVMProviderFactory
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 
 class CompleteDebtorFragment() : Fragment() {
     private var _binding: FragmentCompleteDebtorBinding? = null
     private val binding get() = _binding!!
     private lateinit var debtorAdapter: DebtorAdapter
-    private lateinit var listDebtorActivity: ListAllDebtorActivity
     private lateinit var viewModel: DebtorViewModel
 
     private var completeData = ArrayList<DebtorItem>()
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        viewModel = activity?.run {
-            ViewModelProvider(
-                viewModelStore,
-                KodelapoViewModelProviderFactory(ApiHelper(RetrofitInstance.api))
-            ).get(DebtorViewModel::class.java)
-        }!!
-
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -45,11 +36,30 @@ class CompleteDebtorFragment() : Fragment() {
     ): View {
         _binding = FragmentCompleteDebtorBinding.inflate(inflater, container, false)
         // Inflate the layout for this fragment
-        listDebtorActivity = activity as ListAllDebtorActivity
+        setupViewModel()
         setupRecyclerView()
-        getData()
+
+        val activity: ListAllDebtorActivity = activity as ListAllDebtorActivity
+        GlobalScope.launch(Dispatchers.Main) {
+            viewModel.getDebtor(
+                activity.getTokenUser(),
+                activity.getUsernameUser(),
+                year = "2018",
+                month = "1"
+            )
+            getData()
+        }
+
         return binding.root
     }
+
+    private fun setupViewModel() {
+        viewModel = ViewModelProvider(
+            viewModelStore,
+            AslilokalVMProviderFactory(ApiHelper(RetrofitInstance.api))
+        ).get(DebtorViewModel::class.java)
+    }
+
 
     private fun getData() {
         viewModel.debtors.observe(viewLifecycleOwner, { response ->
@@ -66,18 +76,18 @@ class CompleteDebtorFragment() : Fragment() {
     }
 
     private fun separateData(debtorList: ArrayList<DebtorItem>?) {
-        var listAllDebt = debtorList
-        if (listAllDebt != null) {
-            var uncomplete = listAllDebt.filter { it.statusTransaction }
-            if (uncomplete.isNotEmpty()) {
-                uncomplete.forEach { debtorItem ->
-                    completeData.add(debtorItem)
+        if (debtorList != null) {
+            Log.d("LISTALLDEBT", debtorList.toString())
+            debtorList.forEach { item ->
+                Log.d("FOREACHCOMPLETE", item.toString())
+                if (item.statusTransaction) {
+                    completeData.add(item)
                 }
-                debtorAdapter.differ.submitList(completeData)
             }
+            Log.d("COMPLETEDATA", completeData.size.toString())
+            debtorAdapter.differ.submitList(completeData.toList())
         }
     }
-
 
     private fun setupRecyclerView() {
         debtorAdapter = DebtorAdapter()

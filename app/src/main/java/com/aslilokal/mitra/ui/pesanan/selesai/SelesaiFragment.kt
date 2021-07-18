@@ -14,16 +14,16 @@ import com.aslilokal.mitra.model.data.api.ApiHelper
 import com.aslilokal.mitra.model.data.api.RetrofitInstance
 import com.aslilokal.mitra.ui.adapter.PesananAdapter
 import com.aslilokal.mitra.ui.pesanan.PesananViewModel
-import com.aslilokal.mitra.utils.KodelapoDataStore
+import com.aslilokal.mitra.utils.AslilokalDataStore
 import com.aslilokal.mitra.utils.ResourcePagination
-import com.aslilokal.mitra.viewmodel.KodelapoViewModelProviderFactory
+import com.aslilokal.mitra.viewmodel.AslilokalVMProviderFactory
 import kotlinx.coroutines.launch
 
 class SelesaiFragment : Fragment() {
     //    val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
     private var _binding: FragmentSelesaiBinding? = null
     private val binding get() = _binding!!
-    private lateinit var datastore: KodelapoDataStore
+    private lateinit var datastore: AslilokalDataStore
     private lateinit var viewModel: PesananViewModel
     private lateinit var orderAdapter: PesananAdapter
 
@@ -32,12 +32,12 @@ class SelesaiFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentSelesaiBinding.inflate(inflater, container, false)
+        datastore = AslilokalDataStore(binding.root.context)
 
         hideEmpty()
         setupViewModel()
         setupRecycler()
 
-        datastore = KodelapoDataStore(binding.root.context)
 
         getData()
 
@@ -60,7 +60,7 @@ class SelesaiFragment : Fragment() {
     private fun setupViewModel() {
         viewModel = ViewModelProvider(
             viewModelStore,
-            KodelapoViewModelProviderFactory(ApiHelper(RetrofitInstance.api))
+            AslilokalVMProviderFactory(ApiHelper(RetrofitInstance.api))
         ).get(PesananViewModel::class.java)
     }
 

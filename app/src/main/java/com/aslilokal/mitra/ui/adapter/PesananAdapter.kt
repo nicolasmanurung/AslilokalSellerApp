@@ -1,6 +1,7 @@
 package com.aslilokal.mitra.ui.adapter
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.view.LayoutInflater
@@ -10,6 +11,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.aslilokal.mitra.databinding.ItemPesananBinding
 import com.aslilokal.mitra.model.remote.response.ResultOrder
+import com.aslilokal.mitra.ui.pesanan.detail.DetailPesananActivity
 import com.aslilokal.mitra.utils.Constants.Companion.BUCKET_PRODUCT_URL
 import com.bumptech.glide.Glide
 import com.bumptech.glide.Priority
@@ -53,7 +55,7 @@ class PesananAdapter :
                         "seller" -> {
                             binding.btnAcceptOrder.text = "Antar"
                         }
-                        "pickup" -> {
+                        "CUSTOM Dijemput Sendiri" -> {
                             binding.btnAcceptOrder.text = "Selesai dikemas"
                         }
                         else -> {
@@ -68,7 +70,7 @@ class PesananAdapter :
                             binding.btnAcceptOrder.setBackgroundColor(Color.parseColor("#F6C358"))
                         }
                         else -> {
-                            binding.btnAcceptOrder.text = "Lihat detail"
+                            binding.btnAcceptOrder.text = "Selesaikan Pesanan"
                             binding.btnAcceptOrder.strokeColor =
                                 ColorStateList.valueOf(Color.parseColor("#FF7676"))
                             binding.btnAcceptOrder.strokeWidth = 1
@@ -89,6 +91,12 @@ class PesananAdapter :
                     binding.btnAcceptOrder.strokeWidth = 1
                     binding.btnAcceptOrder.setTextColor(Color.parseColor("#FF7676"))
                 }
+            }
+
+            itemView.setOnClickListener {
+                val intent = Intent(binding.root.context, DetailPesananActivity::class.java)
+                intent.putExtra("idOrder", order._id)
+                binding.root.context.startActivity(intent)
             }
 //            itemView.setOnClickListener {
 //                Toast.makeText(

@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "122349536087",
+    "project_id": "aslilokal-seller",
+    "storage_bucket": "aslilokal-seller.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:122349536087:android:9febbd9321ca3a970cb412",
+        "android_client_info": {
+          "package_name": "com.aslilokal.mitra"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "122349536087-6po490ef7d5ofedtb8d6bgr26vp9t7m5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBVuhPORFiQvSBeSGtsJkeKRt50rtRFpcI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "122349536087-6po490ef7d5ofedtb8d6bgr26vp9t7m5.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

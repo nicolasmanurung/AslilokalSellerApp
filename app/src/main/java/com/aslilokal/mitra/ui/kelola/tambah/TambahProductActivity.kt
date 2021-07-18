@@ -25,9 +25,9 @@ import com.aslilokal.mitra.databinding.ActivityTambahProductBinding
 import com.aslilokal.mitra.model.data.api.ApiHelper
 import com.aslilokal.mitra.model.data.api.RetrofitInstance
 import com.aslilokal.mitra.utils.CustomFunction
-import com.aslilokal.mitra.utils.KodelapoDataStore
+import com.aslilokal.mitra.utils.AslilokalDataStore
 import com.aslilokal.mitra.utils.Status
-import com.aslilokal.mitra.viewmodel.KodelapoViewModelProviderFactory
+import com.aslilokal.mitra.viewmodel.AslilokalVMProviderFactory
 import id.zelory.compressor.Compressor
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
@@ -43,7 +43,7 @@ import java.io.File
 class TambahProductActivity : AppCompatActivity() {
     //    val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
     private lateinit var binding: ActivityTambahProductBinding
-    private var datastore = KodelapoDataStore(this)
+    private lateinit var datastore : AslilokalDataStore
     private lateinit var filePhoto: File
     private var FILE_NAME: String? = "imgProduct"
     private val REQUEST_CODE = 13
@@ -72,7 +72,7 @@ class TambahProductActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityTambahProductBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
+        datastore = AslilokalDataStore(binding.root.context)
         ArrayAdapter.createFromResource(
             this,
             R.array.jenis_product,
@@ -150,7 +150,7 @@ class TambahProductActivity : AppCompatActivity() {
     private fun setupViewModel() {
         viewModel = ViewModelProvider(
             this,
-            KodelapoViewModelProviderFactory(ApiHelper(RetrofitInstance.api))
+            AslilokalVMProviderFactory(ApiHelper(RetrofitInstance.api))
         ).get(TambahProductViewModel::class.java)
     }
 

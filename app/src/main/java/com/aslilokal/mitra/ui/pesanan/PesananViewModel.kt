@@ -3,7 +3,7 @@ package com.aslilokal.mitra.ui.pesanan
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.aslilokal.mitra.model.data.repository.KodelapoRepository
+import com.aslilokal.mitra.model.data.repository.AslilokalRepository
 import com.aslilokal.mitra.model.remote.request.PesananRequest
 import com.aslilokal.mitra.model.remote.response.OrderResponse
 import com.aslilokal.mitra.model.remote.response.StatusResponse
@@ -12,7 +12,7 @@ import kotlinx.coroutines.launch
 import retrofit2.Response
 import java.io.IOException
 
-class PesananViewModel(private var mainRepository: KodelapoRepository) : ViewModel() {
+class PesananViewModel(private var mainRepository: AslilokalRepository) : ViewModel() {
     val orders: MutableLiveData<ResourcePagination<OrderResponse>> = MutableLiveData()
     var orderResponse: OrderResponse? = null
 

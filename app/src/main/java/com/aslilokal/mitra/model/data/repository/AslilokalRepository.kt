@@ -7,12 +7,13 @@ import com.aslilokal.mitra.model.remote.request.PesananRequest
 import com.aslilokal.mitra.model.remote.request.RegisterRequest
 import com.aslilokal.mitra.model.remote.response.DebtorItem
 import com.aslilokal.mitra.model.remote.response.LoginResponse
+import com.aslilokal.mitra.model.remote.response.Shop
 import com.aslilokal.mitra.model.remote.response.VoucherItem
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.Response
 
-class KodelapoRepository(val apiHelper: ApiHelper) {
+class AslilokalRepository(val apiHelper: ApiHelper) {
     suspend fun postLogin(sellerData: LoginRequest): Response<LoginResponse> =
         apiHelper.postLogin(sellerData)
 
@@ -68,6 +69,11 @@ class KodelapoRepository(val apiHelper: ApiHelper) {
         idUser: String,
         status: String
     ) = apiHelper.getOrderByStatus(token, idUser, status)
+
+    suspend fun getDetailOrder(
+        key: String,
+        orderId: String
+    ) = apiHelper.getDetailOrder(key, orderId)
 
     suspend fun putStatusOrder(
         token: String,
@@ -130,12 +136,16 @@ class KodelapoRepository(val apiHelper: ApiHelper) {
         noWhatsappShop: RequestBody,
         isPickup: RequestBody,
         isDelivery: RequestBody,
-        freeOngkirLimitKm: RequestBody,
         addressShop: RequestBody,
-        postalCode: RequestBody,
+        postalCodeInput: RequestBody,
         isTwentyFourHours: RequestBody,
         openTime: RequestBody,
-        closeTime: RequestBody
+        closeTime: RequestBody,
+        cityId: RequestBody,
+        provinceId: RequestBody,
+        province: RequestBody,
+        cityName: RequestBody,
+        postalCodeRO: RequestBody
     ) = apiHelper.postShopBiodata(
         token,
         imgShop,
@@ -145,18 +155,18 @@ class KodelapoRepository(val apiHelper: ApiHelper) {
         noWhatsappShop,
         isPickup,
         isDelivery,
-        freeOngkirLimitKm,
         addressShop,
-        postalCode,
+        postalCodeInput,
         isTwentyFourHours,
         openTime,
-        closeTime
+        closeTime,
+        cityId, provinceId, province, cityName, postalCodeRO
     )
 
     suspend fun putRequestShopRegister(
         token: String,
         idUser: String,
-        status: RequestBody
+        status: String
     ) = apiHelper.putRequestRegistrationShop(token, idUser, status)
 
     suspend fun getDebtorByMonth(
@@ -203,4 +213,14 @@ class KodelapoRepository(val apiHelper: ApiHelper) {
         token: String,
         oneVoucher: VoucherItem
     ) = apiHelper.postOneVoucher(token, oneVoucher)
+
+    suspend fun getCitiesRO(
+        key: String
+    ) = apiHelper.getCitiesRO(key)
+
+    suspend fun putShopInfo(
+        token: String,
+        username: String,
+        shopData: Shop
+    ) = apiHelper.putShopInfo(token, username, shopData)
 }

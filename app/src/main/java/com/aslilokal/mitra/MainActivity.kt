@@ -2,6 +2,7 @@ package com.aslilokal.mitra
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -11,16 +12,24 @@ import androidx.navigation.findNavController
 import androidx.navigation.ui.NavigationUI
 import com.aslilokal.mitra.databinding.ActivityMainBinding
 import com.aslilokal.mitra.ui.account.login.LoginActivity
+import com.aslilokal.mitra.ui.account.verify.review.ReviewPageActivity
 import com.aslilokal.mitra.ui.kelola.tambah.TambahProductActivity
 import com.aslilokal.mitra.ui.notifications.NotificationActivity
-import com.aslilokal.mitra.utils.KodelapoDataStore
+import com.aslilokal.mitra.utils.AslilokalDataStore
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.firebase.messaging.FirebaseMessaging
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 
+// Notifikasi Channel setup
+// "/topics/[name topics]"
+const val NOTIFICATION_TOPIC = "/topics/notification-"
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
-    private var datastore = KodelapoDataStore(this)
+    private var datastore = AslilokalDataStore(this)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,9 +45,26 @@ class MainActivity : AppCompatActivity() {
             val username = datastore.read("USERNAME").toString()
             val isLogin = datastore.read("ISLOGIN").toString()
 
-            if (isLogin == "null") {
-                startActivity(Intent(binding.root.context, LoginActivity::class.java))
-                finish()
+            when (isLogin) {
+                "null" -> {
+                    startActivity(Intent(binding.root.context, LoginActivity::class.java))
+                    finish()
+                }
+                "review" -> {
+                    startActivity(Intent(binding.root.context, ReviewPageActivity::class.java))
+                    finish()
+                }
+                else -> {
+                    FirebaseMessaging.getInstance().token.addOnSuccessListener {
+                        Log.d("FCMTOKEN", it)
+                        CoroutineScope(Dispatchers.IO).launch {
+                            datastore.save("devicetoken", it)
+                        }
+                    }
+                    val finalTopic = "$NOTIFICATION_TOPIC$username"
+                    Log.d("FINALTOPIC", finalTopic)
+                    FirebaseMessaging.getInstance().subscribeToTopic(finalTopic)
+                }
             }
         }
 
@@ -61,19 +87,23 @@ class MainActivity : AppCompatActivity() {
                     setSupportActionBar(binding.mainToolbar)
                     navController.navigate(R.id.navigation_beranda)
                     binding.mainToolbar.title = ""
-                    binding.searchToolbar.searchToolbar.title = ""
                     binding.mainToolbar.visibility = View.VISIBLE
+                    binding.searchToolbar.searchToolbar.title = ""
                     binding.searchToolbar.searchToolbar.visibility = View.GONE
                     binding.fabMain.hide()
                     binding.fabPesanan.hide()
                     true
                 }
                 R.id.navigation_kelola_produk -> {
-                    binding.mainToolbar.visibility = View.GONE
+                    //temp hide search feature
+                    setSupportActionBar(binding.mainToolbar)
+                    // hide search feature
+                    binding.mainToolbar.visibility = View.VISIBLE
                     binding.mainToolbar.title = ""
                     binding.searchToolbar.searchToolbar.title = ""
-                    binding.searchToolbar.searchToolbar.visibility = View.VISIBLE
-                    setSupportActionBar(binding.searchToolbar.searchToolbar)
+                    //hide search feature
+                    binding.searchToolbar.searchToolbar.visibility = View.GONE
+                    //setSupportActionBar(binding.searchToolbar.searchToolbar)
                     navController.navigate(R.id.navigation_kelola_produk)
                     binding.fabMain.show()
                     binding.fabPesanan.hide()

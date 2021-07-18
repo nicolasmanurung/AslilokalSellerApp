@@ -15,9 +15,10 @@ import com.aslilokal.mitra.model.remote.response.LoginResponse
 import com.aslilokal.mitra.ui.account.register.RegisterActivity
 import com.aslilokal.mitra.ui.account.verify.AccountRegistrationActivity
 import com.aslilokal.mitra.ui.account.verify.VerifyEmailActivity
-import com.aslilokal.mitra.utils.KodelapoDataStore
+import com.aslilokal.mitra.ui.account.verify.review.ReviewPageActivity
+import com.aslilokal.mitra.utils.AslilokalDataStore
 import com.aslilokal.mitra.utils.Status
-import com.aslilokal.mitra.viewmodel.KodelapoViewModelProviderFactory
+import com.aslilokal.mitra.viewmodel.AslilokalVMProviderFactory
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -25,12 +26,14 @@ import kotlinx.coroutines.launch
 class LoginActivity : AppCompatActivity() {
     private lateinit var binding: ActivityLoginBinding
     private lateinit var viewModel: LoginViewModel
-    private var datastore = KodelapoDataStore(this)
+    private lateinit var datastore : AslilokalDataStore
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        datastore = AslilokalDataStore(binding.root.context)
 
         binding.lnrDaftar.setOnClickListener {
             startActivity(Intent(this, RegisterActivity::class.java))
@@ -64,7 +67,7 @@ class LoginActivity : AppCompatActivity() {
     private fun setupViewModel() {
         viewModel = ViewModelProvider(
             this,
-            KodelapoViewModelProviderFactory(ApiHelper(RetrofitInstance.api))
+            AslilokalVMProviderFactory(ApiHelper(RetrofitInstance.api))
         ).get(LoginViewModel::class.java)
     }
 
@@ -82,7 +85,31 @@ class LoginActivity : AppCompatActivity() {
                                     Toast.LENGTH_SHORT
                                 ).show()
                             } else if (res?.success == true) {
-                                if (res.emailVerifyStatus) {
+                                if (!res.emailVerifyStatus) {
+                                    GlobalScope.launch(Dispatchers.IO) {
+                                        datastore.save(
+                                            "SHOPSTATUS",
+                                            res.shopVerifyStatus.toString()
+                                        )
+                                        datastore.save(
+                                            "ISLOGIN",
+                                            "null"
+                                        )
+                                        datastore.save(
+                                            "USERNAME",
+                                            res.username.toString()
+                                        )
+                                        datastore.save(
+                                            "TOKEN",
+                                            "JWT " + res.token.toString()
+                                        )
+                                    }
+
+                                    val intent = Intent(this, VerifyEmailActivity::class.java)
+                                    intent.putExtra("emailSeller", sellerData.emailSeller)
+                                    startActivity(intent)
+                                    finish()
+                                } else if (res.emailVerifyStatus) {
                                     GlobalScope.launch(Dispatchers.IO) {
                                         datastore.save(
                                             "SHOPSTATUS",
@@ -121,7 +148,6 @@ class LoginActivity : AppCompatActivity() {
                                                 )
                                             }
                                             val intent = Intent(this, MainActivity::class.java)
-                                            intent.putExtra("ISLOGIN", "true")
                                             startActivity(intent)
                                             finish()
                                         }
@@ -129,39 +155,31 @@ class LoginActivity : AppCompatActivity() {
                                             GlobalScope.launch(Dispatchers.IO) {
                                                 datastore.save(
                                                     "ISLOGIN",
-                                                    "true"
+                                                    "review"
                                                 )
                                             }
-                                            val intent = Intent(this, MainActivity::class.java)
-                                            intent.putExtra("ISLOGIN", "true")
+                                            val intent =
+                                                Intent(this, ReviewPageActivity::class.java)
+//                                            intent.putExtra("idSellerAccount", res.username)
                                             startActivity(intent)
                                             finish()
                                         }
+                                        else -> {
+                                            GlobalScope.launch(Dispatchers.IO) {
+                                                datastore.save(
+                                                    "ISLOGIN",
+                                                    "null"
+                                                )
+                                            }
+                                            startActivity(
+                                                Intent(
+                                                    this,
+                                                    AccountRegistrationActivity::class.java
+                                                )
+                                            )
+                                            finish()
+                                        }
                                     }
-                                } else if (!res.emailVerifyStatus) {
-                                    GlobalScope.launch(Dispatchers.IO) {
-                                        datastore.save(
-                                            "SHOPSTATUS",
-                                            res.shopVerifyStatus.toString()
-                                        )
-                                        datastore.save(
-                                            "ISLOGIN",
-                                            "null"
-                                        )
-                                        datastore.save(
-                                            "USERNAME",
-                                            res.username.toString()
-                                        )
-                                        datastore.save(
-                                            "TOKEN",
-                                            "JWT " + res.token.toString()
-                                        )
-                                    }
-
-                                    val intent = Intent(this, VerifyEmailActivity::class.java)
-                                    intent.putExtra("emailSeller", sellerData.emailSeller)
-                                    startActivity(intent)
-                                    finish()
                                 }
                             }
                         }

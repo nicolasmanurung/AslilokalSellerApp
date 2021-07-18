@@ -1,5 +1,6 @@
 package com.aslilokal.mitra.ui.analitik.pencairan
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -15,11 +16,12 @@ import com.aslilokal.mitra.model.data.api.RetrofitInstance
 import com.aslilokal.mitra.model.remote.response.RevenueItem
 import com.aslilokal.mitra.ui.adapter.PencairanAdapter
 import com.aslilokal.mitra.ui.analitik.AnalitikViewModel
+import com.aslilokal.mitra.ui.analitik.pencairan.pengajuan.PengajuanPencairanActivity
+import com.aslilokal.mitra.utils.AslilokalDataStore
 import com.aslilokal.mitra.utils.CustomFunction
-import com.aslilokal.mitra.utils.KodelapoDataStore
 import com.aslilokal.mitra.utils.ResourcePagination
 import com.aslilokal.mitra.utils.Status
-import com.aslilokal.mitra.viewmodel.KodelapoViewModelProviderFactory
+import com.aslilokal.mitra.viewmodel.AslilokalVMProviderFactory
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 
@@ -27,18 +29,19 @@ class PencairanFragment : Fragment() {
     private var _binding: FragmentPencairanBinding? = null
     private val binding get() = _binding!!
     private lateinit var viewModel: AnalitikViewModel
-    private lateinit var datastore: KodelapoDataStore
+    private lateinit var datastore: AslilokalDataStore
     private lateinit var pencairanAdapter: PencairanAdapter
 
     private lateinit var username: String
     private lateinit var token: String
+    private var sumRevenue: Int? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentPencairanBinding.inflate(inflater, container, false)
-        datastore = KodelapoDataStore(binding.root.context)
+        datastore = AslilokalDataStore(binding.root.context)
         showLoadingList()
 
         setupViewModel()
@@ -64,7 +67,7 @@ class PencairanFragment : Fragment() {
     private fun setupViewModel() {
         viewModel = ViewModelProvider(
             viewModelStore,
-            KodelapoViewModelProviderFactory(ApiHelper(RetrofitInstance.api))
+            AslilokalVMProviderFactory(ApiHelper(RetrofitInstance.api))
         ).get(AnalitikViewModel::class.java)
     }
 
@@ -135,7 +138,17 @@ class PencairanFragment : Fragment() {
                                 binding.txtSumSaldo.text = "Rp 0"
                             } else {
                                 binding.txtSumSaldo.text =
-                                    CustomFunction().formatRupiah(response.sumSaldo.toDouble())
+                                    CustomFunction().formatRupiah(response.result.sumSaldo.toDouble())
+                                binding.rlPencairan.setOnClickListener {
+                                    sumRevenue = response.result.sumSaldo.toInt()
+
+                                    val intent = Intent(
+                                        binding.root.context,
+                                        PengajuanPencairanActivity::class.java
+                                    )
+                                    intent.putExtra("sumRevenue", sumRevenue.toString())
+                                    binding.root.context.startActivity(intent)
+                                }
                             }
                         }
                     }
@@ -172,5 +185,10 @@ class PencairanFragment : Fragment() {
         binding.saldoSkeletonLayout.hideShimmer()
         binding.rvSkeletonLayout.hideShimmerAdapter()
         binding.rvPencairan.visibility = View.VISIBLE
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

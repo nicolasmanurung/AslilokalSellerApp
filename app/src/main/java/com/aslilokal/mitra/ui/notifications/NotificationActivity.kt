@@ -11,22 +11,22 @@ import com.aslilokal.mitra.databinding.ActivityNotificationBinding
 import com.aslilokal.mitra.model.data.api.ApiHelper
 import com.aslilokal.mitra.model.data.api.RetrofitInstance
 import com.aslilokal.mitra.ui.adapter.NotificationAdapter
-import com.aslilokal.mitra.utils.KodelapoDataStore
+import com.aslilokal.mitra.utils.AslilokalDataStore
 import com.aslilokal.mitra.utils.ResourcePagination
-import com.aslilokal.mitra.viewmodel.KodelapoViewModelProviderFactory
+import com.aslilokal.mitra.viewmodel.AslilokalVMProviderFactory
 import kotlinx.coroutines.launch
 
 class NotificationActivity : AppCompatActivity() {
     //    val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
     private lateinit var binding: ActivityNotificationBinding
-    private var datastore = KodelapoDataStore(this)
+    private lateinit var datastore : AslilokalDataStore
     private lateinit var viewModel: NotificationViewModel
     private lateinit var notificationAdapter: NotificationAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityNotificationBinding.inflate(layoutInflater)
-
+        datastore = AslilokalDataStore(binding.root.context)
         hideEmpty()
         setupViewModel()
         setupRecycler()
@@ -43,7 +43,7 @@ class NotificationActivity : AppCompatActivity() {
     private fun setupViewModel() {
         viewModel = ViewModelProvider(
             this,
-            KodelapoViewModelProviderFactory(ApiHelper(RetrofitInstance.api))
+            AslilokalVMProviderFactory(ApiHelper(RetrofitInstance.api))
         ).get(NotificationViewModel::class.java)
     }
 

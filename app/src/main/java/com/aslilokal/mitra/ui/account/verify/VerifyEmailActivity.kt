@@ -16,9 +16,12 @@ import com.aslilokal.mitra.model.data.api.ApiHelper
 import com.aslilokal.mitra.model.data.api.RetrofitInstance
 import com.aslilokal.mitra.model.remote.response.StatusResponse
 import com.aslilokal.mitra.ui.account.AccountViewModel
-import com.aslilokal.mitra.utils.KodelapoDataStore
+import com.aslilokal.mitra.utils.AslilokalDataStore
 import com.aslilokal.mitra.utils.Status
-import com.aslilokal.mitra.viewmodel.KodelapoViewModelProviderFactory
+import com.aslilokal.mitra.viewmodel.AslilokalVMProviderFactory
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import java.util.concurrent.TimeUnit
 
@@ -30,14 +33,14 @@ class VerifyEmailActivity : AppCompatActivity() {
     private lateinit var emailSeller: String
 
     //    val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
-    private var datastore = KodelapoDataStore(this)
+    private lateinit var datastore : AslilokalDataStore
     private lateinit var verifyToken: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityVerifyEmailBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
+        datastore = AslilokalDataStore(binding.root.context)
         hideProgress()
         setupViewModel()
         emailSeller = intent.getStringExtra("emailSeller")!!
@@ -95,7 +98,7 @@ class VerifyEmailActivity : AppCompatActivity() {
     private fun setupViewModel() {
         viewModel = ViewModelProvider(
             this,
-            KodelapoViewModelProviderFactory(ApiHelper(RetrofitInstance.api))
+            AslilokalVMProviderFactory(ApiHelper(RetrofitInstance.api))
         ).get(AccountViewModel::class.java)
     }
 
@@ -146,6 +149,12 @@ class VerifyEmailActivity : AppCompatActivity() {
                                 Toast.makeText(this, tokenResponse.message, Toast.LENGTH_SHORT)
                                     .show()
                             } else if (tokenResponse?.success == true) {
+                                GlobalScope.launch(Dispatchers.IO) {
+                                    datastore.save(
+                                        "ISLOGIN",
+                                        "null"
+                                    )
+                                }
                                 startActivity(Intent(this, AccountRegistrationActivity::class.java))
                                 finish()
                             }

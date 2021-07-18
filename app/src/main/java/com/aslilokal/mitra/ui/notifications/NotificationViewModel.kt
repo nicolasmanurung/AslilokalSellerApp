@@ -3,14 +3,14 @@ package com.aslilokal.mitra.ui.notifications
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.aslilokal.mitra.model.data.repository.KodelapoRepository
+import com.aslilokal.mitra.model.data.repository.AslilokalRepository
 import com.aslilokal.mitra.model.remote.response.NotificationResponse
 import com.aslilokal.mitra.utils.ResourcePagination
 import kotlinx.coroutines.launch
 import retrofit2.Response
 import java.io.IOException
 
-class NotificationViewModel(private var mainRepository: KodelapoRepository) : ViewModel() {
+class NotificationViewModel(private var mainRepository: AslilokalRepository) : ViewModel() {
     val notifications: MutableLiveData<ResourcePagination<NotificationResponse>> = MutableLiveData()
     var notificationResponse: NotificationResponse? = null
 

@@ -1,9 +1,11 @@
 package com.aslilokal.mitra.ui.kelola.fashion
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AbsListView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -15,10 +17,10 @@ import com.aslilokal.mitra.model.data.api.ApiHelper
 import com.aslilokal.mitra.model.data.api.RetrofitInstance
 import com.aslilokal.mitra.ui.adapter.ProductAdapter
 import com.aslilokal.mitra.ui.kelola.KelolaProdukViewModel
-import com.aslilokal.mitra.utils.Constants
-import com.aslilokal.mitra.utils.KodelapoDataStore
+import com.aslilokal.mitra.utils.Constants.Companion.QUERY_PAGE_SIZE
+import com.aslilokal.mitra.utils.AslilokalDataStore
 import com.aslilokal.mitra.utils.ResourcePagination
-import com.aslilokal.mitra.viewmodel.KodelapoViewModelProviderFactory
+import com.aslilokal.mitra.viewmodel.AslilokalVMProviderFactory
 import kotlinx.coroutines.launch
 
 class FashionFragment : Fragment() {
@@ -29,14 +31,14 @@ class FashionFragment : Fragment() {
     lateinit var viewModel: KelolaProdukViewModel
     lateinit var productAdapter: ProductAdapter
 
-    private lateinit var datastore: KodelapoDataStore
+    private lateinit var datastore: AslilokalDataStore
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentFashionBinding.inflate(inflater, container, false)
 
-        datastore = KodelapoDataStore(binding.root.context)
+        datastore = AslilokalDataStore(binding.root.context)
         setupViewModel()
 
         viewLifecycleOwner.lifecycleScope.launch {
@@ -58,7 +60,7 @@ class FashionFragment : Fragment() {
     private fun setupViewModel() {
         viewModel = ViewModelProvider(
             viewModelStore,
-            KodelapoViewModelProviderFactory(ApiHelper(RetrofitInstance.api))
+            AslilokalVMProviderFactory(ApiHelper(RetrofitInstance.api))
         ).get(KelolaProdukViewModel::class.java)
     }
 
@@ -86,8 +88,8 @@ class FashionFragment : Fragment() {
                         } else {
                             binding.lnrEmpty.visibility = View.GONE
                         }
-                        val totalPages = productResponse.totalPages / Constants.QUERY_PAGE_SIZE + 2
-                        isLastPage = viewModel.productPage == totalPages
+                        val totalPages = productResponse.totalPages
+                        isLastPage = (viewModel.productPage - 1) == totalPages
                         if (isLastPage) {
                             binding.rvFashion.setPadding(0, 0, 0, 0)
                         }
@@ -137,7 +139,7 @@ class FashionFragment : Fragment() {
             val isNotLoadingAndNotLastPage = !isLoading && !isLastPage
             val isAtLastItem = firstVisibleItemPosition + visibleItemCount >= totalItemCount
             val isNotAtBeginning = firstVisibleItemPosition >= 0
-            val isTotalMoreThanVisible = totalItemCount >= Constants.QUERY_PAGE_SIZE
+            val isTotalMoreThanVisible = totalItemCount >= QUERY_PAGE_SIZE
             val shouldPaginate =
                 isNoErrors && isNotLoadingAndNotLastPage && isAtLastItem && isNotAtBeginning &&
                         isTotalMoreThanVisible && isScrolling
@@ -148,14 +150,20 @@ class FashionFragment : Fragment() {
                 viewLifecycleOwner.lifecycleScope.launch {
                     username = datastore.read("USERNAME").toString()
                     token = datastore.read("TOKEN").toString()
-
                     viewModel.getProducts(token, username, "fashion")
                     isScrolling = false
                 }
             }
         }
-    }
 
+        override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+            super.onScrollStateChanged(recyclerView, newState)
+            if (newState == AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL) {
+                Log.d("ISSCROLL", "Eksekusi")
+                isScrolling = true
+            }
+        }
+    }
 
     override fun onDestroyView() {
         super.onDestroyView()

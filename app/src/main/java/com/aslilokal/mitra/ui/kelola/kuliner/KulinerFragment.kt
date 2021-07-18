@@ -1,9 +1,11 @@
 package com.aslilokal.mitra.ui.kelola.kuliner
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AbsListView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -15,10 +17,10 @@ import com.aslilokal.mitra.model.data.api.ApiHelper
 import com.aslilokal.mitra.model.data.api.RetrofitInstance
 import com.aslilokal.mitra.ui.adapter.ProductAdapter
 import com.aslilokal.mitra.ui.kelola.KelolaProdukViewModel
-import com.aslilokal.mitra.utils.Constants
-import com.aslilokal.mitra.utils.KodelapoDataStore
+import com.aslilokal.mitra.utils.Constants.Companion.QUERY_PAGE_SIZE
+import com.aslilokal.mitra.utils.AslilokalDataStore
 import com.aslilokal.mitra.utils.ResourcePagination
-import com.aslilokal.mitra.viewmodel.KodelapoViewModelProviderFactory
+import com.aslilokal.mitra.viewmodel.AslilokalVMProviderFactory
 import kotlinx.coroutines.launch
 
 class KulinerFragment : Fragment() {
@@ -29,14 +31,14 @@ class KulinerFragment : Fragment() {
     lateinit var viewModel: KelolaProdukViewModel
     lateinit var productAdapter: ProductAdapter
 
-    private lateinit var datastore: KodelapoDataStore
+    private lateinit var datastore: AslilokalDataStore
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentKulinerBinding.inflate(inflater, container, false)
 
-        datastore = KodelapoDataStore(binding.root.context)
+        datastore = AslilokalDataStore(binding.root.context)
 
         setupViewModel()
 
@@ -58,7 +60,7 @@ class KulinerFragment : Fragment() {
     private fun setupViewModel() {
         viewModel = ViewModelProvider(
             viewModelStore,
-            KodelapoViewModelProviderFactory(ApiHelper(RetrofitInstance.api))
+            AslilokalVMProviderFactory(ApiHelper(RetrofitInstance.api))
         ).get(KelolaProdukViewModel::class.java)
     }
 
@@ -79,16 +81,15 @@ class KulinerFragment : Fragment() {
                     hideErrorMessage()
                     hideSwipeProgress()
                     response.data?.result.let { productResponse ->
-                        var product =
-                            productAdapter.differ.submitList(productResponse?.docs?.toList())
+                        productAdapter.differ.submitList(productResponse?.docs?.toList())
 
                         if (productResponse?.docs?.toList()?.size!! <= 0) {
                             binding.lnrEmpty.visibility = View.VISIBLE
                         } else {
                             binding.lnrEmpty.visibility = View.GONE
                         }
-                        val totalPages = productResponse.totalPages / Constants.QUERY_PAGE_SIZE + 2
-                        isLastPage = viewModel.productPage == totalPages
+                        val totalPages = productResponse.totalPages
+                        isLastPage = (viewModel.productPage - 1) == totalPages
                         if (isLastPage) {
                             binding.rvKuliner.setPadding(0, 0, 0, 0)
                         }
@@ -125,7 +126,7 @@ class KulinerFragment : Fragment() {
     var isLastPage = false
     var isScrolling = false
 
-    val scrollListener = object : RecyclerView.OnScrollListener() {
+    private val scrollListener = object : RecyclerView.OnScrollListener() {
         override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
             super.onScrolled(recyclerView, dx, dy)
 
@@ -138,7 +139,7 @@ class KulinerFragment : Fragment() {
             val isNotLoadingAndNotLastPage = !isLoading && !isLastPage
             val isAtLastItem = firstVisibleItemPosition + visibleItemCount >= totalItemCount
             val isNotAtBeginning = firstVisibleItemPosition >= 0
-            val isTotalMoreThanVisible = totalItemCount >= Constants.QUERY_PAGE_SIZE
+            val isTotalMoreThanVisible = totalItemCount >= QUERY_PAGE_SIZE
             val shouldPaginate =
                 isNoErrors && isNotLoadingAndNotLastPage && isAtLastItem && isNotAtBeginning &&
                         isTotalMoreThanVisible && isScrolling
@@ -148,10 +149,17 @@ class KulinerFragment : Fragment() {
                 viewLifecycleOwner.lifecycleScope.launch {
                     username = datastore.read("USERNAME").toString()
                     token = datastore.read("TOKEN").toString()
-
                     viewModel.getProducts(token, username, "kuliner")
                     isScrolling = false
                 }
+            }
+        }
+
+        override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+            super.onScrollStateChanged(recyclerView, newState)
+            if (newState == AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL) {
+                Log.d("ISSCROLL", "Eksekusi")
+                isScrolling = true
             }
         }
     }

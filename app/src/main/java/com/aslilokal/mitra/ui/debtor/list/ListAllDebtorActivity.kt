@@ -10,7 +10,6 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.viewpager2.adapter.FragmentStateAdapter
-import com.google.android.material.tabs.TabLayoutMediator
 import com.aslilokal.mitra.databinding.ActivityListAllDebtorBinding
 import com.aslilokal.mitra.model.data.api.ApiHelper
 import com.aslilokal.mitra.model.data.api.RetrofitInstance
@@ -20,28 +19,28 @@ import com.aslilokal.mitra.ui.debtor.complete.CompleteDebtorFragment
 import com.aslilokal.mitra.ui.debtor.tambah.TambahDebtorActivity
 import com.aslilokal.mitra.ui.debtor.uncomplete.UncompleteDebtorFragment
 import com.aslilokal.mitra.utils.CustomFunction
-import com.aslilokal.mitra.utils.KodelapoDataStore
+import com.aslilokal.mitra.utils.AslilokalDataStore
 import com.aslilokal.mitra.utils.ResourcePagination
-import com.aslilokal.mitra.viewmodel.KodelapoViewModelProviderFactory
+import com.aslilokal.mitra.viewmodel.AslilokalVMProviderFactory
+import com.google.android.material.tabs.TabLayoutMediator
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 
 class ListAllDebtorActivity : AppCompatActivity() {
-    //    val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
     private lateinit var binding: ActivityListAllDebtorBinding
     private lateinit var viewModel: DebtorViewModel
-    private var datastore = KodelapoDataStore(this)
+    private lateinit var datastore : AslilokalDataStore
 
-    private lateinit var token: String
-    private lateinit var username: String
+    lateinit var token: String
+    lateinit var username: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityListAllDebtorBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
+        datastore = AslilokalDataStore(binding.root.context)
         setupViewModel()
         runBlocking {
             token = datastore.read("TOKEN").toString()
@@ -63,6 +62,14 @@ class ListAllDebtorActivity : AppCompatActivity() {
         }
 
         setupObservers()
+    }
+
+    fun getTokenUser(): String {
+        return token
+    }
+
+    fun getUsernameUser(): String {
+        return username
     }
 
 
@@ -87,7 +94,7 @@ class ListAllDebtorActivity : AppCompatActivity() {
     private fun setupViewModel() {
         viewModel = ViewModelProvider(
             this,
-            KodelapoViewModelProviderFactory(ApiHelper(RetrofitInstance.api))
+            AslilokalVMProviderFactory(ApiHelper(RetrofitInstance.api))
         ).get(DebtorViewModel::class.java)
     }
 

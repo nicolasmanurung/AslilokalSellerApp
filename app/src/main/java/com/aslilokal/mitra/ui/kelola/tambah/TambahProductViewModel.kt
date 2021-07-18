@@ -2,13 +2,13 @@ package com.aslilokal.mitra.ui.kelola.tambah
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.liveData
-import com.aslilokal.mitra.model.data.repository.KodelapoRepository
+import com.aslilokal.mitra.model.data.repository.AslilokalRepository
 import com.aslilokal.mitra.utils.Resource
 import kotlinx.coroutines.Dispatchers
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 
-class TambahProductViewModel(private var mainRepository: KodelapoRepository) : ViewModel() {
+class TambahProductViewModel(private var mainRepository: AslilokalRepository) : ViewModel() {
 
     fun postProduct(
         token: String,

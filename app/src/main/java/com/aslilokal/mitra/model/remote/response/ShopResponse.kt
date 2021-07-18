@@ -12,19 +12,33 @@ data class ShopResponse(
 
 @Parcelize
 data class Shop(
-    val __v: Int,
-    val _id: String,
+    val __v: Int?,
+    val _id: String?,
     val addressShop: String,
     val closeTime: String,
-    val freeOngkirLimitKm: String,
     val idSellerAccount: String,
     val imgShop: String,
     val isDelivery: Boolean,
+    val isShopFreeDelivery: Boolean,
     val isPickup: Boolean,
     val isTwentyFourHours: Boolean,
+    val postalCodeInput: String?,
     val nameShop: String,
     val noTelpSeller: String,
     val noWhatsappShop: String,
     val openTime: String,
-    val sumFollowers: Int
+    val sumFollowers: Int?,
+    val sumCountView: Int?,
+    val shopTypeStatus: String?,
+    val rajaOngkir: RajaOngkirAddress?
+) : Parcelable
+
+@Parcelize
+data class RajaOngkirAddress(
+    val city_id: String,
+    val city_name: String,
+    val postal_code: String,
+    val province: String,
+    val province_id: String,
+    val type: String?
 ) : Parcelable

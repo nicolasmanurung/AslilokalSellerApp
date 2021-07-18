@@ -14,9 +14,9 @@ import com.aslilokal.mitra.model.data.api.RetrofitInstance
 import com.aslilokal.mitra.model.remote.response.DebtorItem
 import com.aslilokal.mitra.ui.debtor.DebtorViewModel
 import com.aslilokal.mitra.utils.CustomFunction
-import com.aslilokal.mitra.utils.KodelapoDataStore
+import com.aslilokal.mitra.utils.AslilokalDataStore
 import com.aslilokal.mitra.utils.Status
-import com.aslilokal.mitra.viewmodel.KodelapoViewModelProviderFactory
+import com.aslilokal.mitra.viewmodel.AslilokalVMProviderFactory
 import kotlinx.coroutines.runBlocking
 import me.abhinay.input.CurrencySymbols
 
@@ -24,7 +24,7 @@ class DetailDebtorActivity : AppCompatActivity() {
     //    val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
     private lateinit var binding: ActivityDetailDebtorBinding
     private lateinit var viewModel: DebtorViewModel
-    private var datastore = KodelapoDataStore(this)
+    private lateinit var datastore : AslilokalDataStore
     private lateinit var token: String
     private lateinit var username: String
     private lateinit var debtorItem: DebtorItem
@@ -33,7 +33,7 @@ class DetailDebtorActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityDetailDebtorBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
+        datastore = AslilokalDataStore(binding.root.context)
         setupViewModel()
         runBlocking {
             token = datastore.read("TOKEN").toString()
@@ -82,7 +82,7 @@ class DetailDebtorActivity : AppCompatActivity() {
     private fun setupViewModel() {
         viewModel = ViewModelProvider(
             this,
-            KodelapoViewModelProviderFactory(ApiHelper(RetrofitInstance.api))
+            AslilokalVMProviderFactory(ApiHelper(RetrofitInstance.api))
         ).get(DebtorViewModel::class.java)
     }
 

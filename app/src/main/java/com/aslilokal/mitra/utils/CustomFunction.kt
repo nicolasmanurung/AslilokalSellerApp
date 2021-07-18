@@ -3,6 +3,7 @@ package com.aslilokal.mitra.utils
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Matrix
+import android.util.Log
 import androidx.exifinterface.media.ExifInterface
 import com.parassidhu.simpledate.toDateTimeYYInDigits
 import okio.IOException
@@ -39,6 +40,14 @@ class CustomFunction {
         return Bitmap.createBitmap(bm, 0, 0, bounds.outWidth, bounds.outHeight, matrix, true)
     }
 
+    fun isoTimeToAddDaysTime(date: String): String {
+        val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:s.S'Z'", Locale.getDefault())
+        val date = format.parse(date)
+        val tempDate = Date(date.time + (1000 * 60 * 60 * 24 * 2))
+        Log.d("DATEISOCONVERT", "date : $date, tempDate : $tempDate")
+        return tempDate.toDateTimeString()
+    }
+
     fun isoTimeToDateMonth(date: String): String {
         val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:s.S'Z'", Locale.getDefault())
         val date: Date = format.parse(date)
@@ -57,7 +66,7 @@ class CustomFunction {
         return date.toDateMonthYear()
     }
 
-    fun normalDateToIsoTime(date: String): String{
+    fun normalDateToIsoTime(date: String): String {
         val format = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
         val date: Date = format.parse(date)
         return date.toIsoTime()
@@ -74,6 +83,10 @@ class CustomFunction {
         val formatRupiah: NumberFormat = NumberFormat.getCurrencyInstance(localeID)
         var finalNumber = formatRupiah.format(number)
         return finalNumber.replace(",00", "")
+    }
+
+    fun reverseFormatRupiah(number: String): String {
+        return number.replace("[Rp,.]".toRegex(), "")
     }
 
     fun formateMonthAndYear(date: String): String {
@@ -97,8 +110,13 @@ class CustomFunction {
         return dateAsString(this, pattern)
     }
 
-    private fun Date?.toIsoTime(): String{
+    private fun Date?.toIsoTime(): String {
         val pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX"
+        return dateAsString(this, pattern)
+    }
+
+    private fun Date?.toDateTimeString(): String {
+        val pattern = "dd MMM yyyy HH:mm"
         return dateAsString(this, pattern)
     }
 // ---------------------------------------------------------

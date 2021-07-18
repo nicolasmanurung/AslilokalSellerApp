@@ -27,9 +27,9 @@ import com.aslilokal.mitra.databinding.FragmentSellerInfoBinding
 import com.aslilokal.mitra.model.data.api.ApiHelper
 import com.aslilokal.mitra.model.data.api.RetrofitInstance
 import com.aslilokal.mitra.ui.account.AccountViewModel
-import com.aslilokal.mitra.utils.KodelapoDataStore
+import com.aslilokal.mitra.utils.AslilokalDataStore
 import com.aslilokal.mitra.utils.Status
-import com.aslilokal.mitra.viewmodel.KodelapoViewModelProviderFactory
+import com.aslilokal.mitra.viewmodel.AslilokalVMProviderFactory
 import id.zelory.compressor.Compressor
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
@@ -52,7 +52,7 @@ class SellerInfoFragment : Fragment() {
     private val REQUEST_CODE = 13
 
     private lateinit var viewModel: AccountViewModel
-    private lateinit var dataStore: KodelapoDataStore
+    private lateinit var dataStore: AslilokalDataStore
 
     private lateinit var imgSelfRequestFile: RequestBody
     private lateinit var imgKtpRequestFile: RequestBody
@@ -89,7 +89,7 @@ class SellerInfoFragment : Fragment() {
     ): View {
         _binding = FragmentSellerInfoBinding.inflate(inflater, container, false)
         accountRegistrationActivity = activity as AccountRegistrationActivity
-        dataStore = KodelapoDataStore(binding.root.context)
+        dataStore = AslilokalDataStore(binding.root.context)
         setupViewModel()
 
 
@@ -125,7 +125,7 @@ class SellerInfoFragment : Fragment() {
     private fun setupViewModel() {
         viewModel = ViewModelProvider(
             viewModelStore,
-            KodelapoViewModelProviderFactory(ApiHelper(RetrofitInstance.api))
+            AslilokalVMProviderFactory(ApiHelper(RetrofitInstance.api))
         ).get(AccountViewModel::class.java)
     }
 
